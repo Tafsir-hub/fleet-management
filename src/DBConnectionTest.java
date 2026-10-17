@@ -23,7 +23,7 @@ public class DBConnectionTest{
 		
 		try (Connection conn = DriverManager.getConnection(url, user, password)){
 			if (conn != null) {
-				System.out.println("connected to fleet_management database successfully!");
+				System.out.println("Connected to fleet_management database successfully!");
 			}
 		} catch (SQLException e){
 			System.out.println("Connection failed.");
