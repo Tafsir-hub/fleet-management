@@ -10,13 +10,13 @@ import java.util.List;
 import com.tafsir.fleetmanagement.model.Vehicle;
 import com.tafsir.fleetmanagement.model.VehicleStatus;
 
-public class VehicleDAO {
+public class VehicleDAO extends DBConnection {
 
 	public List<Vehicle> findAll() throws SQLException{
 		String sql = "SELECT vehicle_id, make_model, year,vehicle_type, mileage,status " 
 					+ "FROM vehicles ORDER BY vehicle_id";
 		List<Vehicle> vehicles = new ArrayList<>();
-	try (Connection conn = DBConnection.getConnection();
+	try (Connection conn = getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery()){
 		while (rs.next()) {

@@ -9,15 +9,12 @@ import java.util.Properties;
 
 
 
-public class DBConnection {
+public abstract class DBConnection {
 	
-	final static String CONFIG_FILE = "config.properties";
+	private final static String CONFIG_FILE = "config.properties";
 	
-	private DBConnection() {
-		
-	}
 	
-	public static Connection getConnection() throws SQLException {
+	protected Connection getConnection() throws SQLException {
 		Properties config = new Properties();
 		try(FileInputStream in = new FileInputStream(CONFIG_FILE)){
 			config.load(in);
