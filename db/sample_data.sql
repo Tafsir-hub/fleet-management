@@ -1,3 +1,9 @@
+-- FMAS sample data for the fleet_management database (cool cars edition)
+-- Run as root in MySQL Workbench (Local Fleet DB connection).
+-- Re-running this script resets vehicles, drivers, trips, fuel and maintenance
+-- back to this sample data. The users table is not touched: the login account
+-- is created later, when login is built (slice 2).
+
 USE fleet_management;
 
 SET FOREIGN_KEY_CHECKS = 0;
