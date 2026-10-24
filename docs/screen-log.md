@@ -32,3 +32,10 @@
 - Screenshots: ![Active](screens/vehicles-step-03-filter-active.png) ![Van](screens/vehicles-step-03-filter-van.png)
 - Problems and fixes: none
 
+
+### Step 4 - Shell, sidebar and tabs
+- Commit message: Vehicles screen step 4: shell with sidebar, tabs and stylesheet (reusable AppShell, Sidebar, TabSwitch)
+- What changed: centered navy header, sidebar with navigation and Logout, Vehicles/Drivers tabs, look moved into fmas.css; the header moved out of VehicleScreen into the shared AppShell
+- Test cases touched: none
+- Screenshots: ![Shell](screens/vehicles-step-04-shell.png) ![Drivers tab](screens/vehicles-step-04-drivers-tab.png)
+- Problems and fixed: the first run still showed the step 3 layout because MainApp opened VehicleScreen directly instead of through AppShell; the sidebar highlight first did not show, then showed on every item, fixed by making the CSS rule require both class names

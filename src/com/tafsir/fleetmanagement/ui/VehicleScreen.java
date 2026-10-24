@@ -9,10 +9,8 @@ import com.tafsir.fleetmanagement.model.Vehicle;
 import com.tafsir.fleetmanagement.model.VehicleStatus;
 import com.tafsir.fleetmanagement.ui.components.AllChoiceBox;
 import com.tafsir.fleetmanagement.ui.components.Dialogs;
-import com.tafsir.fleetmanagement.ui.components.HeaderBar;
+import com.tafsir.fleetmanagement.ui.components.TabSwitch;
 import com.tafsir.fleetmanagement.ui.components.TableColumns;
-import com.tafsir.fleetmanagement.ui.components.Theme;
-
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
+
 
 public class VehicleScreen extends BorderPane {
 	
@@ -32,9 +31,42 @@ public class VehicleScreen extends BorderPane {
 	private final VehicleDAO vehicleDAO = new VehicleDAO();
 	private final TableView<Vehicle> table = new TableView<>();
 	private final Label countLabel = new Label();
+	private final BorderPane vehiclesPane = new BorderPane();
+	private final StackPane driversPane = new StackPane();
 	
 	public VehicleScreen() {
-		setTop(new VBox(new HeaderBar("FMAS	|	Vehicles"), buildFilterBar()));
+		
+		setPadding(new Insets(18, 20, 14, 0));
+		TabSwitch tabs = new TabSwitch(this::showTab, "Vehicles", "Drivers");
+		setTop(tabs);
+		BorderPane.setMargin(tabs, new Insets(0, 0, 14, 0));
+		
+		buildVehiclesPane();
+		buildDriversPane();
+		showTab("Vehicles");
+		
+		statusFilter.setOnAction(e -> loadVehicles());
+		typeFilter.setOnAction(e -> loadVehicles());
+		loadVehicles();
+	}
+	
+	private void showTab(String tab) {
+		setCenter("Drivers".equals(tab) ? driversPane: vehiclesPane);
+		
+	}
+
+	private void buildDriversPane() {
+		Label note = new Label("Drivers arrive in Slice 3");
+		note.getStyleClass().add("muted");
+		driversPane.getChildren().add(note);
+		
+	}
+
+	private void buildVehiclesPane() {
+		
+		HBox filters = new HBox(10, new Label("Status:"), statusFilter, new Label("Type"), typeFilter);
+		filters.setAlignment(Pos.CENTER_LEFT);
+		filters.setPadding(new Insets(0, 0, 12, 0));
 		
 		table.getColumns().add(TableColumns.of("ID", "vehicleId", 60));
 		table.getColumns().add(TableColumns.of("Make / Model", "makeModel", 240));
@@ -45,29 +77,16 @@ public class VehicleScreen extends BorderPane {
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 		table.setPlaceholder(new Label("No vehicles found"));
 		
-		setCenter(table);
-		BorderPane.setMargin(table, new Insets(0, 16, 0, 16));
+		countLabel.getStyleClass().add("muted");
+		BorderPane.setMargin(countLabel, new Insets(8, 0, 0, 0));
 		
-		countLabel.setStyle("-fx-text-fill: " + Theme.MUTED + ";");
-		setBottom(countLabel);
-		BorderPane.setMargin(countLabel, new Insets(8, 16, 12, 16));
-		
-		statusFilter.setOnAction(e -> loadVehicles());
-		typeFilter.setOnAction(e -> loadVehicles());
-		
-		loadVehicles();
+		vehiclesPane.setTop(filters);
+		vehiclesPane.setCenter(table);
+		vehiclesPane.setBottom(countLabel);
 		
 	}
 	
-	private HBox buildFilterBar() {
-		HBox bar = new HBox(10, new Label("Status:"), statusFilter, new Label("Type"), typeFilter);
-		bar.setAlignment(Pos.CENTER_LEFT);
-		bar.setPadding(new Insets(14, 16, 14, 16));
-		return bar;
-	}
-	
-
-	// Reads both filters, asks the DAO and shows the result in the table
+// Reads both filters, asks the DAO and shows the result in the table
 	private void loadVehicles() {
 		VehicleStatus status = statusFilter.getSelection();
 		String type = typeFilter.getSelection();

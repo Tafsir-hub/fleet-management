@@ -1,6 +1,8 @@
 package com.tafsir.fleetmanagement.app;
 
 import com.tafsir.fleetmanagement.ui.VehicleScreen;
+import com.tafsir.fleetmanagement.ui.components.AppShell;
+import com.tafsir.fleetmanagement.ui.components.Dialogs;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -10,10 +12,18 @@ public class MainApp extends Application {
 	
 	@Override
 	public void start(Stage stage) {
+		AppShell shell = new AppShell(
+				"FMAS \u2014 Vehicle Management",
+				"Vehicles",
+				new VehicleScreen(),
+				name -> Dialogs.info("Coming Soon", name + " is built in a later slice."));
 		
-		//Slice 1: open the Vehicles screen directly. Login in subsequent steps
+		Scene scene= new Scene(shell, 1100, 650);
+		scene.getStylesheets().add(getClass().getResource("/fmas.css").toExternalForm());
+		
+		
 		stage.setTitle("FMAS - Fleet Management & Analytics System");
-		stage.setScene(new Scene(new VehicleScreen(), 900, 560));
+		stage.setScene(scene);
 		stage.show();
 		
 	}

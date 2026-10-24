@@ -1,0 +1,83 @@
+.root {
+    -fx-font-family: "Calibri";
+    -fx-font-size: 14px;
+    -fx-background-color: white;
+}
+
+.label {
+    -fx-text-fill: #20264A;
+}
+
+.muted {
+    -fx-text-fill: #5B6690;
+}
+
+/* navy title band */
+.header-bar {
+    -fx-background-color: #1E2761;
+    -fx-padding: 10 18 10 18;
+    -fx-alignment: center;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-family: "Cambria";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* left sidebar */
+.sidebar {
+    -fx-background-color: #F3F5FC;
+    -fx-border-color: transparent #D5DBEE transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 14 12 12 12;
+    -fx-spacing: 4;
+}
+
+.sidebar-line {
+    -fx-background-color: #D5DBEE;
+    -fx-min-height: 1;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+.button.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #5B6690;
+    -fx-font-weight: normal;
+    -fx-alignment: center-left;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.button.nav-button:hover {
+    -fx-background-color: #E4E9F7;
+}
+
+.button.nav-button.nav-button-selected,
+.button.nav-button.nav-button-selected:hover {
+    -fx-background-color: #1E2761;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Vehicles / Drivers tab buttons */
+.tab-button {
+    -fx-background-color: #F3F5FC;
+    -fx-text-fill: #5B6690;
+    -fx-background-radius: 6;
+    -fx-padding: 8 0 8 0;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab-button:selected {
+    -fx-background-color: #1E2761;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
