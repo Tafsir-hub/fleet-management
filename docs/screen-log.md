@@ -22,5 +22,13 @@
 - What changed: table of vehicles loaded through VehicleDAO.findAll, built with the reusable TableColumns helper; errors go through the reusable Dialogs class
 - Test cases touched: none
 - Screenshot: ![Step 2](screens/vehicles-step-02-table.png)
-- Problems and fixes: a leftover Test Vehicle row from the DAO test showed 11 rows instead of 10, fixed by re-running sample_data.sql; the header bar background was missing, fixed (CAUSE)
+- Problems and fixes: a leftover Test Vehicle row from the DAO test showed 11 rows instead of 10, fixed by re-running sample_data.sql; the header bar background was missing, fixed
+
+
+### Step 3 - Status and type filters
+- Commit message: Vehicles screen step 3: status and type filters (reusable AllChoiceBox)
+- What changed: two dropdown filters built with the reusable AllChoiceBox; the table reloads through VehicleDAO.findAll(status, type); a count shows below the table
+- Test cases touched: TC-07, TC-08
+- Screenshots: ![Active](screens/vehicles-step-03-filter-active.png) ![Van](screens/vehicles-step-03-filter-van.png)
+- Problems and fixes: none
 
