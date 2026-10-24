@@ -16,3 +16,11 @@
 - Test cases touched: none
 - Screenshot: ![Step 1](screens/vehicles-step-01-header.png)
 - Problems and fixes: none
+
+### Step 2 - Vehicle table
+- Commit message: Vehicles screen step 2: vehicle table (reusable TableColumns and Dialogs)
+- What changed: table of vehicles loaded through VehicleDAO.findAll, built with the reusable TableColumns helper; errors go through the reusable Dialogs class
+- Test cases touched: none
+- Screenshot: ![Step 2](screens/vehicles-step-02-table.png)
+- Problems and fixes: a leftover Test Vehicle row from the DAO test showed 11 rows instead of 10, fixed by re-running sample_data.sql; the header bar background was missing, fixed (CAUSE)
+

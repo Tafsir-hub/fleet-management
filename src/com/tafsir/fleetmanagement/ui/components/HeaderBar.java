@@ -13,7 +13,7 @@ public class HeaderBar extends HBox {
 		titleLabel.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
 		getChildren().add(titleLabel);
 		setPadding(new Insets(14, 18,14,18));
-		setStyle("fx_background-color: " + Theme.NAVY + ";");
+		setStyle("-fx-background-color: " + Theme.NAVY + ";");
 	}
 		public void setTitle(String title) {
 			titleLabel.setText(title);
