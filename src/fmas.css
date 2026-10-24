@@ -81,3 +81,107 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+
+/* ---------- filter row ---------- */
+.field-caption {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E2761;
+}
+
+.field-error {
+    -fx-font-size: 12px;
+    -fx-text-fill: #D94F1E;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: #CBD3EA;
+    -fx-border-radius: 6;
+    -fx-padding: 9 10 9 10;
+    -fx-prompt-text-fill: #8A93B5;
+}
+
+.combo-box-base {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: #CBD3EA;
+    -fx-border-radius: 6;
+    -fx-padding: 3 2 3 2;
+}
+
+.combo-box-base > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.button.primary-button {
+    -fx-background-color: #1E2761;
+    -fx-text-fill: white;
+    -fx-font-family: "Cambria";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 11 20 11 20;
+    -fx-cursor: hand;
+}
+
+.button.primary-button:hover {
+    -fx-background-color: #2A3580;
+}
+
+/* ---------- table ---------- */
+.table-view {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-color: #D5DBEE;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1E2761;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: #1E2761;
+    -fx-size: 38;
+    -fx-border-color: transparent #3A4488 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #E4E9F7;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 34;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #F3F5FC;
+}
+
+.table-view .table-row-cell:selected,
+.table-view .table-row-cell:odd:selected {
+    -fx-background-color: #CADCFC;
+}
+
+.table-view .table-row-cell:empty,
+.table-view .table-row-cell:empty:odd {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #20264A;
+    -fx-alignment: center-left;
+    -fx-padding: 0 8 0 8;
+}
