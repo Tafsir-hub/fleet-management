@@ -185,3 +185,44 @@
     -fx-alignment: center-left;
     -fx-padding: 0 8 0 8;
 }
+
+/* ---------- message bar ---------- */
+.message-bar {
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 6;
+}
+
+.message-success {
+    -fx-background-color: #E3F4EC;
+}
+
+.message-success .label {
+    -fx-text-fill: #1B6B45;
+    -fx-font-weight: bold;
+}
+
+.message-error {
+    -fx-background-color: #FBE7E1;
+}
+
+.message-error .label {
+    -fx-text-fill: #A63A14;
+    -fx-font-weight: bold;
+}
+
+/* ---------- dialogs ---------- */
+.dialog-pane {
+    -fx-background-color: white;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: #1E2761;
+    -fx-padding: 14 20 14 20;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Cambria";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}

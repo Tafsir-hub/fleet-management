@@ -47,3 +47,12 @@
 - Test cases touched: TC-07, TC-08 (re-checked)
 - Screenshots: ![Table](screens/vehicles-step-05-table.png) ![Search](screens/vehicles-step-05-search.png)
 - Problems and fixes: nonethe search box did nothing because loadVehicles() still replaced the table's rows with a new list, bypassing the filtered list; fixed by loading into loadedVehicles and re-applying the search. The count text was missing a space.
+
+
+### Step 6 - Add Vehicle dialog
+- Commit message: Vehicles screen step 6: Add Vehicle dialog with validation (reusable MessageBar, VehicleTypes)
+- What changed: + Add Vehicle opens a dialog (make/model, year, type dropdown, mileage, status dropdown); each field is checked with Validator and shows a red message when wrong; a saved vehicle appears selected in the table with a green confirmation
+- Test cases touched: TC-01, TC-02
+- Screenshots: ![Dialog](screens/vehicles-step-06-add-dialog.png) ![Year error](screens/vehicles-step-06-year-error.png) ![Added](screens/vehicles-step-06-added.png)
+- Problems and fixes: none
+

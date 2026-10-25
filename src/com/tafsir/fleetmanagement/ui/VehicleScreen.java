@@ -4,6 +4,7 @@ package com.tafsir.fleetmanagement.ui;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
 import com.tafsir.fleetmanagement.model.Vehicle;
@@ -26,6 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 
 public class VehicleScreen extends BorderPane {
@@ -44,11 +46,13 @@ public class VehicleScreen extends BorderPane {
 	private final StackPane driversPane = new StackPane();
 	private final ObservableList<Vehicle> loadedVehicles = FXCollections.observableArrayList();
 	private final FilteredList<Vehicle> shownVehicles = new FilteredList<>(loadedVehicles, v -> true);
+	private final MessageBar messageBar = new MessageBar();
 	
 	
 	public VehicleScreen() {
 		
 		setPadding(new Insets(18, 20, 14, 20));
+		
 		TabSwitch tabs = new TabSwitch(this::showTab, "Vehicles", "Drivers");
 		setTop(tabs);
 		BorderPane.setMargin(tabs, new Insets(0, 0, 16, 0));
@@ -94,8 +98,7 @@ public class VehicleScreen extends BorderPane {
 		
 		PrimaryButton addButton = new PrimaryButton("+ Add Vehicle");
 		addButton.setPrefWidth(200);
-		addButton.setOnAction(e ->
-				Dialogs.info("Coming soon", "The Add Vehicle form is built in the next steps."));
+		addButton.setOnAction(e -> addVehicle());
 		
 		HBox filters = new HBox(16, searchBox,
 				new LabeledField("Status", statusFilter),
@@ -104,7 +107,7 @@ public class VehicleScreen extends BorderPane {
 		filters.setAlignment(Pos.BOTTOM_LEFT);
 		filters.setPadding(new Insets(0, 0, 14, 0));
 		
-		table.getColumns().add(TableColumns.<Vehicle>formatted("ID", v -> String.format("V-%03d", v.getVehicleId()), 90));
+		table.getColumns().add(TableColumns.<Vehicle>formatted("ID", v -> displayId(v.getVehicleId()), 90));
         table.getColumns().add(TableColumns.of("Make / Model", "makeModel", 260));
         table.getColumns().add(TableColumns.of("Year", "year", 80));
         table.getColumns().add(TableColumns.of("Type", "vehicleType", 140));
@@ -115,23 +118,60 @@ public class VehicleScreen extends BorderPane {
         table.setItems(shownVehicles);
 		
 		countLabel.getStyleClass().add("muted");
-		BorderPane.setMargin(countLabel, new Insets(8, 0, 0, 0));
+		VBox bottom = new VBox(8, messageBar, countLabel);
+		bottom.setPadding(new Insets(8, 0, 0, 0));
 		
 		vehiclesPane.setTop(filters);
 		vehiclesPane.setCenter(table);
-		vehiclesPane.setBottom(countLabel);
+		vehiclesPane.setBottom(bottom);
 		
 	}
 	
+private static String displayId(int vehicleId) {
+		return String.format("V-%03d", vehicleId);
+		
+	}
+
 // Reads both filters, asks the DAO and shows the result in the table
 	private void loadVehicles() {
-		
+		messageBar.hide();		
 		try {
 			List<Vehicle> vehicles = vehicleDAO.findAll(statusFilter.getSelection(), typeFilter.getSelection());
 			loadedVehicles.setAll(vehicles);
 			applySearch();
 		}catch (SQLException e) {
 			Dialogs.error("Could not load vehicles", e.getMessage());
+		}
+		
+	}
+	
+	private void addVehicle() {
+		Optional<Vehicle> entered = new AddVehicleDialog().showAndWait(getScene().getWindow());
+		if (!entered.isPresent()) {
+			return; // The user cancelled
+		}
+		try {
+			int newId = vehicleDAO.addVehicle(entered.get());
+			statusFilter.reset(); // This clears the filters so the the new row cannot be hidden
+			typeFilter.reset();
+			searchField.clear();
+			loadVehicles();
+			selectVehicle(newId);
+			messageBar.success("Added " + displayId(newId) + ": " + entered.get().getMakeModel());
+					
+		} catch (SQLException e) {
+			Dialogs.error("Could not add the vehicle", e.getMessage());
+		}
+	}
+	
+	private void selectVehicle(int vehicleId) {
+		for (Vehicle v: shownVehicles) {
+			if(v.getVehicleId() == vehicleId) {
+				table.getSelectionModel().select(v);
+				table.scrollTo(v);
+				return;
+			}
+			
 		}
 		
 	}

@@ -14,5 +14,9 @@ public class Theme {
 	private Theme() {
 		
 	}
+	
+	public static String stylesheet() {
+		return Theme.class.getResource("/fmas.css").toExternalForm();
+	}
 
 }
