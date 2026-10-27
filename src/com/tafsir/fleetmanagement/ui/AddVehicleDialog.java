@@ -6,17 +6,11 @@ import com.tafsir.fleetmanagement.logic.Validator;
 import com.tafsir.fleetmanagement.model.Vehicle;
 import com.tafsir.fleetmanagement.model.VehicleStatus;
 import com.tafsir.fleetmanagement.model.VehicleTypes;
+import com.tafsir.fleetmanagement.ui.components.FormDialog;
 import com.tafsir.fleetmanagement.ui.components.LabeledField;
-import com.tafsir.fleetmanagement.ui.components.Theme;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
@@ -43,32 +37,10 @@ public class AddVehicleDialog {
 	
 	//Shows the dialog. Return the new vehicle, or empty if the user cancelled
 	public Optional<Vehicle> showAndWait(Window owner) {
-		Dialog<ButtonType> dialog = new Dialog<>();
-		dialog.initOwner(owner);
-		dialog.setTitle("FMAS - Add Vehicle");
-		dialog.setHeaderText("Add a vehicle to the fleet");
-		
-		ButtonType addType = new ButtonType("Add Vehicle", ButtonBar.ButtonData.OK_DONE);
-		dialog.getDialogPane().getButtonTypes().addAll(addType, ButtonType.CANCEL);
-		dialog.getDialogPane().getStylesheets().add(Theme.stylesheet());
-		dialog.getDialogPane().setContent(buildForm());
-		
-		Node addButton = dialog.getDialogPane().lookupButton(addType);
-		addButton.getStyleClass().add("primary-button");
-		// Check if the input before the dialog closes. A failed check keeps it open.
-		addButton.addEventFilter(ActionEvent.ACTION, event -> {
-			if(!validate()) {
-				event.consume();
-				Platform.runLater(() -> dialog.getDialogPane().getScene().getWindow().sizeToScene());
-			}
-		});
-		
-		Optional<ButtonType> choice = dialog.showAndWait();
-		if (choice.isPresent() && choice.get() == addType) {
-			return Optional.ofNullable(result);
-			
-		}
-		return Optional.empty();
+		FormDialog dialog = new FormDialog(
+				"FMAS - Add Vehicle", "Add a vehicle to the fleet", "Add Vehicle", 
+				buildForm(), this::validate);
+		return dialog.ShowAndWait(owner) ? Optional.ofNullable(result) : Optional.empty();
 	}
 
 	private VBox buildForm() {
@@ -130,7 +102,7 @@ public class AddVehicleDialog {
 			ok = false;
 		} else {
 			try {
-				mileage = Integer.parseInt(mileageText.trim());
+				mileage = Integer.parseInt(mileageText.trim().replace(",", ""));
 				if (!validator.validMileage(0, mileage)) {
 					mileageRow.setError("Mileage cannot be negative");
 					ok = false;

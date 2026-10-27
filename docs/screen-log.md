@@ -56,3 +56,12 @@
 - Screenshots: ![Dialog](screens/vehicles-step-06-add-dialog.png) ![Year error](screens/vehicles-step-06-year-error.png) ![Added](screens/vehicles-step-06-added.png)
 - Problems and fixes: none
 
+
+### Step 7 - Update vehicle (double-click a row)
+- Commit message: Vehicles screen step 7: update mileage and status by double-click (UpdateVehicleDialog, reusable FormDialog)
+- What changed: the dialog shell (header, buttons, stylesheet, check before closing) moved into the reusable FormDialog; double-clicking a vehicle opens UpdateVehicleDialog to change mileage and status; mileage cannot go down (Validator.validMileage), status is chosen from a dropdown; changes are saved through VehicleDAO and the table refreshes
+- Test cases touched: TC-03, TC-04, TC-05, TC-06 (TC-01 and TC-02 re-checked after the refactor)
+- Screenshots: ![Dialog](screens/vehicles-step-07-update-dialog.png) ![Error](screens/vehicles-step-07-mileage-error.png) ![Updated](screens/vehicles-step-07-updated.png)
+- Problems and fixes: mileage typed with a thousands separator (11,500) was rejected; both dialogs now ignore commas before reading the number
+
+

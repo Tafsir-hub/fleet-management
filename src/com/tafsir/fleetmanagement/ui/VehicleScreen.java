@@ -15,14 +15,17 @@ import com.tafsir.fleetmanagement.ui.components.LabeledField;
 import com.tafsir.fleetmanagement.ui.components.PrimaryButton;
 import com.tafsir.fleetmanagement.ui.components.TabSwitch;
 import com.tafsir.fleetmanagement.ui.components.TableColumns;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -116,6 +119,15 @@ public class VehicleScreen extends BorderPane {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         table.setPlaceholder(new Label("No vehicles match these filters"));
         table.setItems(shownVehicles);
+        table.setTooltip(new Tooltip("Double-click a row to update it"));
+        table.setRowFactory(tv  -> {
+        	TableRow<Vehicle> row = new TableRow<>(); row.setOnMouseClicked(event -> {
+        		if (event.getClickCount() == 2 && !row.isEmpty()) {
+        			updateVehicle(row.getItem());
+        		}
+        	});
+        	return row;
+        });
 		
 		countLabel.getStyleClass().add("muted");
 		VBox bottom = new VBox(8, messageBar, countLabel);
@@ -126,7 +138,34 @@ public class VehicleScreen extends BorderPane {
 		vehiclesPane.setBottom(bottom);
 		
 	}
-	
+// Opens the update dialog, saves what changed through the DAO, then refreshes the table
+private void updateVehicle(Vehicle vehicle) {
+		UpdateVehicleDialog dialog = new UpdateVehicleDialog(vehicle, displayId(vehicle.getVehicleId()));
+		if (!dialog.showAndWait(getScene().getWindow())) {
+			return;
+		}
+		boolean mileageChanged = dialog.getMileage() != vehicle.getMileage();
+		boolean statusChanged = dialog.getStatus()	!= vehicle.getStatus();
+		if (!mileageChanged && !statusChanged) {
+			return;
+		}
+		try {
+			if (mileageChanged) {
+				vehicleDAO.updateMileage(vehicle.getVehicleId(), dialog.getMileage());
+			}
+			if (statusChanged) {
+				vehicleDAO.updateStatus(vehicle.getVehicleId(), dialog.getStatus());
+			}
+			loadVehicles();
+			selectVehicle(vehicle.getVehicleId());
+			messageBar.success("Updates " + displayId(vehicle.getVehicleId()));
+		} catch (SQLException e){
+			Dialogs.error("Could not update the vehicle", e.getMessage());
+			
+		}
+		
+	}
+
 private static String displayId(int vehicleId) {
 		return String.format("V-%03d", vehicleId);
 		
