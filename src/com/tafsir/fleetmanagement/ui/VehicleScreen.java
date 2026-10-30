@@ -158,7 +158,7 @@ private void updateVehicle(Vehicle vehicle) {
 			}
 			loadVehicles();
 			selectVehicle(vehicle.getVehicleId());
-			messageBar.success("Updates " + displayId(vehicle.getVehicleId()));
+			messageBar.success("Updated " + displayId(vehicle.getVehicleId()));
 		} catch (SQLException e){
 			Dialogs.error("Could not update the vehicle", e.getMessage());
 			

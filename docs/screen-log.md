@@ -65,3 +65,9 @@
 - Problems and fixes: mileage typed with a thousands separator (11,500) was rejected; both dialogs now ignore commas before reading the number
 
 
+
+### Fix - Update dialog zeroed the mileage
+- Commit message: Fix: update dialog saved mileage as 0 (newMileage was never set)
+- What changed: validate() never stored the accepted mileage, so the field kept its default of 0 and every save wrote 0; it now stores the value, and the fields start from the vehicle's current values; the confirmation reads "Updated"
+- Test cases touched: TC-03 and TC-05 (found while testing by hand)
+- Problems and fixes: a number field that is never assigned silently stays 0, so a forgotten line caused no error

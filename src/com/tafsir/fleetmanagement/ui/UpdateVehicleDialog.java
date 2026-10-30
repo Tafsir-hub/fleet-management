@@ -33,6 +33,8 @@ public class UpdateVehicleDialog {
 	public UpdateVehicleDialog(Vehicle vehicle, String idLabel) {
 		this.vehicle =vehicle;
 		this.idLabel = idLabel;
+		this.newMileage = vehicle.getMileage();
+		this.newStatus = vehicle.getStatus();
 		
 	}
 	
@@ -82,11 +84,13 @@ public class UpdateVehicleDialog {
 				ok = false;
 			} else {
 				try {
-					int value = Integer.parseInt(mileageText.trim());
+					int value = Integer.parseInt(mileageText.trim().replace(",", ""));
 					if (!validator.validMileage(vehicle.getMileage(), value)) {
 						mileageRow.setError("Mileage cannot be lower than the current " + String.format("%,d", vehicle.getMileage()));
 						ok = false;
-					}	
+					} else {
+						newMileage = value;
+					}
 				} catch (NumberFormatException e) {
 					mileageRow.setError("Mileage must be a whole number");
 					ok = false;
