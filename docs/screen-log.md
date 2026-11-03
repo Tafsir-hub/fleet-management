@@ -71,3 +71,19 @@
 - What changed: validate() never stored the accepted mileage, so the field kept its default of 0 and every save wrote 0; it now stores the value, and the fields start from the vehicle's current values; the confirmation reads "Updated"
 - Test cases touched: TC-03 and TC-05 (found while testing by hand)
 - Problems and fixes: a number field that is never assigned silently stays 0, so a forgotten line caused no error
+
+
+### Step 8 - Slice 1 test run
+- Commit message: Slice 1 complete: TC-01 to TC-08 run and logged
+- What changed: no code; all eight vehicle test cases run on sample data and passed; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
+- Test cases touched: TC-01 to TC-08
+- Problems and fixes: none during the run (the mileage bug found earlier, TC-05, was fixed before this run)
+
+TC-01: Vehicle saved as V-011 and shown in the list; green confirmation displayed 
+TC-02: Red message “Year is required” shown; dialog stayed open; list still 11 rows
+TC-03: V-004 mileage changed from 11,050 to 11,500, saved and shown in the list
+TC-04: Entered 5,000 for V-004; red message “Mileage cannot be lower than the current 11,500”; table unchanged
+TC-05: V-004 status changed to In Repair and mileage stayed 11,500
+TC-06: Not possible by design: the Status dropdown offers only Active, In Repair and Retired, and nothing can be typed
+TC-07: Only Active vehicles shown (7 of 10)
+TC-08: Only Van-type vehicles shown (3)
