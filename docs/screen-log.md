@@ -87,3 +87,13 @@ TC-05: V-004 status changed to In Repair and mileage stayed 11,500
 TC-06: Not possible by design: the Status dropdown offers only Active, In Repair and Retired, and nothing can be typed
 TC-07: Only Active vehicles shown (7 of 10)
 TC-08: Only Van-type vehicles shown (3)
+
+
+## Login and logout (slice 2)
+
+### Step 1 - Login back end
+- Commit message: Slice 2 step 1: User, UserDAO, PasswordHasher and Authenticator (TC-27, TC-28 in the console)
+- What changed: passwords are stored as salted PBKDF2 hashes (PasswordHasher); Authenticator answers whether a username and password are valid; UserDAO finds a user by username; CreateUserTool saves the first account; username is unique; no sessions yet, on the professor's advice
+- Test cases touched: TC-27, TC-28 (checked in the console; the formal run is at step 4)
+- Screenshot: none (the console shows the typed password)
+- Problems and fixes: "pbkfd2" was misspelled inside a quoted string in verify(), which made every login fail
