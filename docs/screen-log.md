@@ -97,3 +97,12 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: TC-27, TC-28 (checked in the console; the formal run is at step 4)
 - Screenshot: none (the console shows the typed password)
 - Problems and fixes: "pbkfd2" was misspelled inside a quoted string in verify(), which made every login fail
+
+
+
+### Step 2 - Login card
+- Commit message: Slice 2 step 2: login screen (LoginScreen) and the app starts at login
+- What changed: centered login card with username, password and a LOG IN button; a failed login shows one red message; a good login opens the app; Logout in the sidebar returns to a fresh login screen
+- Test cases touched: TC-27, TC-28 (checked on screen; the formal run is at step 4)
+- Screenshots: ![Card](screens/login-step-02-card.png) ![Error](screens/login-step-02-error.png)
+- Problems and fixes: none

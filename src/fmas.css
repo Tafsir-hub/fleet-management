@@ -226,3 +226,35 @@
     -fx-font-size: 15px;
     -fx-font-weight: bold;
 }
+
+/* ---------- login screen ---------- */
+.login-backdrop {
+    -fx-background-color: #F3F5FC;
+}
+
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: #DDE2F2;
+    -fx-border-radius: 14;
+    -fx-padding: 28 32 24 32;
+}
+
+.login-title {
+    -fx-font-family: "Cambria";
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E2761;
+}
+
+.login-subtitle {
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+    -fx-text-fill: #5B6690;
+}
+
+.login-error {
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-text-fill: #A63A14;
+}
