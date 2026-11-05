@@ -106,3 +106,12 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: TC-27, TC-28 (checked on screen; the formal run is at step 4)
 - Screenshots: ![Card](screens/login-step-02-card.png) ![Error](screens/login-step-02-error.png)
 - Problems and fixes: none
+
+
+### Step 3 - Main Menu shell and navigation
+- Commit message: Slice 2 step 3: Main Menu shell, navigation and logout (MainMenuScreen)
+- What changed: after login the Main Menu opens (welcome line, three placeholder stat cards, quick actions); Main Menu is now the first sidebar item, so every screen can return to it; Logout returns to a fresh login screen
+- Test cases touched: TC-27, TC-29 (checked on screen; the formal run is at step 4)
+- Screenshot: ![Main Menu](screens/login-step-03-main-menu.png)
+- Problems and fixes: none
+

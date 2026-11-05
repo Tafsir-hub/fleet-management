@@ -258,3 +258,53 @@
     -fx-font-style: italic;
     -fx-text-fill: #A63A14;
 }
+
+/* ---------- main menu ---------- */
+.menu-welcome {
+    -fx-font-family: "Cambria";
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E2761;
+}
+
+.stat-card {
+    -fx-background-color: #1E2761;
+    -fx-background-radius: 14;
+    -fx-padding: 18 20 18 20;
+    -fx-alignment: center;
+}
+
+.stat-value {
+    -fx-font-family: "Cambria";
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.stat-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #CADCFC;
+}
+
+.section-caption {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E2761;
+}
+
+.button.quick-action {
+    -fx-background-color: #F3F5FC;
+    -fx-background-radius: 10;
+    -fx-border-color: #DDE2F2;
+    -fx-border-radius: 10;
+    -fx-text-fill: #1E2761;
+    -fx-font-family: "Cambria";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 14 10 14 10;
+    -fx-cursor: hand;
+}
+
+.button.quick-action:hover {
+    -fx-background-color: #E4E9F7;
+}

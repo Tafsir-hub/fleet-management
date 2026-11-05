@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 public class Sidebar extends VBox {
 	
 	private static final String[] ITEMS =
-		{"Vehicles", "Drivers", "Trips","Fuel", "Maintenance", "Reports", "Dashboard"};
+		{"Main Menu", "Vehicles", "Drivers", "Trips","Fuel", "Maintenance", "Reports", "Dashboard"};
 	
 	// "selected" is highlighted. "onNavigate" receives the name of the clicked item.
 	public Sidebar(String selected, Consumer<String> onNavigate) {
