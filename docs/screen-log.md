@@ -115,3 +115,12 @@ TC-08: Only Van-type vehicles shown (3)
 - Screenshot: ![Main Menu](screens/login-step-03-main-menu.png)
 - Problems and fixes: none
 
+
+
+### Step 4 - Slice 2 test run
+- Commit message: Slice 2 complete: TC-27 to TC-29 run and logged
+- What changed: no code; the three login and logout test cases run on the screen and passed; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
+- Test cases touched: TC-27, TC-28, TC-29
+- Problems and fixes: none during the run (the earlier console failures are logged under step 1)
+
+
