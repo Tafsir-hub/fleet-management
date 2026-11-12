@@ -124,3 +124,14 @@ TC-08: Only Van-type vehicles shown (3)
 - Problems and fixes: none during the run (the earlier console failures are logged under step 1)
 
 
+## Drivers (slice 3)
+
+### Step 1 - Drivers back end
+- Commit message: Slice 3 step 1: Driver, DriverStatus and DriverDAO
+- What changed: Driver data class, DriverStatus (Active, Inactive) and DriverDAO (list, add, update status), checked in the console
+- Test cases touched: TC-09, TC-11 (the data side; the formal run is at the end of the slice)
+- Screenshot: none
+- Problems and fixes: the project would not compile new enums after Eclipse lost its Java library list; fixed by registering a full Java 22 in Eclipse and rebuilding
+
+
+

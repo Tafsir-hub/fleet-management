@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/Asus/eclipse/javafx-sdk-24/lib/javafx.base.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Asus/eclipse/javafx-sdk-24/lib/javafx.controls.jar"/>
@@ -18,5 +13,6 @@
 	<classpathentry kind="lib" path="C:/Users/Asus/eclipse/javafx-sdk-24/lib/jfx.incubator.input.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Asus/eclipse/javafx-sdk-24/lib/jfx.incubator.richtext.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/libs/mysql-connector-j-26.7.0/mysql-connector-j-26.7.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
