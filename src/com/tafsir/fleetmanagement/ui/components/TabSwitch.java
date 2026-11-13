@@ -2,15 +2,17 @@ package com.tafsir.fleetmanagement.ui.components;
 
 import java.util.function.Consumer;
 
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 
 public class TabSwitch extends HBox {
 	
+	private final ToggleGroup group = new ToggleGroup();
+	
 	public TabSwitch(Consumer<String> onSelect, String... tabs) {
 		super(10);
-		ToggleGroup group = new ToggleGroup();
 		for (String tab: tabs) {
 			ToggleButton button = new ToggleButton(tab);
 			button.setToggleGroup(group);
@@ -27,6 +29,14 @@ public class TabSwitch extends HBox {
 				onSelect.accept(((ToggleButton) newToggle).getText());
 			}
 		});
+	}
+	
+	public void select(String tab) {
+		for (Toggle toggle : group.getToggles()) {
+			if(((ToggleButton) toggle).getText().equals(tab)) {
+				toggle.setSelected(true);
+			}
+		}
 	}
 
 }

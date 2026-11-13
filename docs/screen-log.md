@@ -135,3 +135,11 @@ TC-08: Only Van-type vehicles shown (3)
 
 
 
+### Step 2 - Drivers list
+- Commit message: Slice 3 step 2: Drivers tab shows the driver list (DriverPane)
+- What changed: the Drivers tab of the Vehicles screen lists all drivers (ID, name, license, hire date, status), sorted by last name; the tab content is its own class, DriverPane; the sidebar's Drivers item opens the screen on that tab
+- Test cases touched: TC-09 (the list part; adding comes next)
+- Screenshot: ![Drivers list](screens/drivers-step-02-list.png)
+- Problems and fixes: the License column was squeezed by the wide Name column; fixed 
+
+

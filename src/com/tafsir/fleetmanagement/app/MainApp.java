@@ -31,6 +31,12 @@ public class MainApp extends Application {
     private void showVehicles() {
         show("FMAS \u2014 Vehicle Management", "Vehicles", new VehicleScreen());
     }
+    
+    private void showDrivers() {
+    	VehicleScreen screen = new VehicleScreen();
+    	screen.showDriversTab();
+    	show("FMAS \u2014 Vehicle Management", "Drivers", screen);
+    }
 
     //>> The one place that builds a framed screen: header, sidebar and content.
     private void show(String title, String selectedNav, Node content) {
@@ -46,6 +52,9 @@ public class MainApp extends Application {
             case "Vehicles":
                 showVehicles();
                 break;
+            case "Drivers":
+            	showDrivers();
+            	break;
             case "Logout":
                 scene.setRoot(new LoginScreen(this::showMainMenu));   //>> a NEW login screen: empty fields (TC-29)
                 break;

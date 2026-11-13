@@ -1,7 +1,6 @@
 package com.tafsir.fleetmanagement.ui;
 
 
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +28,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 
@@ -40,13 +38,13 @@ public class VehicleScreen extends BorderPane {
 	
 	private final AllChoiceBox<VehicleStatus> statusFilter = new AllChoiceBox<>(VehicleStatus.values());
 	private final AllChoiceBox<String> typeFilter = new AllChoiceBox<>(TYPES);
-
+	private TabSwitch tabs;
 	private final TextField searchField = new TextField();
 	private final VehicleDAO vehicleDAO = new VehicleDAO();
 	private final TableView<Vehicle> table = new TableView<>();
 	private final Label countLabel = new Label();
 	private final BorderPane vehiclesPane = new BorderPane();
-	private final StackPane driversPane = new StackPane();
+	private DriverPane driversPane = new DriverPane();
 	private final ObservableList<Vehicle> loadedVehicles = FXCollections.observableArrayList();
 	private final FilteredList<Vehicle> shownVehicles = new FilteredList<>(loadedVehicles, v -> true);
 	private final MessageBar messageBar = new MessageBar();
@@ -56,12 +54,12 @@ public class VehicleScreen extends BorderPane {
 		
 		setPadding(new Insets(18, 20, 14, 20));
 		
-		TabSwitch tabs = new TabSwitch(this::showTab, "Vehicles", "Drivers");
+		tabs = new TabSwitch(this::showTab, "Vehicles", "Drivers");
+		
 		setTop(tabs);
 		BorderPane.setMargin(tabs, new Insets(0, 0, 16, 0));
 		
 		buildVehiclesPane();
-		buildDriversPane();
 		showTab("Vehicles");
 		
 		searchField.textProperty().addListener((obs, oldText, newText) -> applySearch());
@@ -78,15 +76,18 @@ public class VehicleScreen extends BorderPane {
 	}
 
 	private void showTab(String tab) {
-		setCenter("Drivers".equals(tab) ? driversPane: vehiclesPane);
-		
+		if ("Drivers".equals(tab)) {
+			if(driversPane == null) {
+				driversPane = new DriverPane();
+			}
+			setCenter(driversPane);
+		}else {
+			setCenter(vehiclesPane);
+		}
+	
 	}
-
-	private void buildDriversPane() {
-		Label note = new Label("Drivers arrive in Slice 3");
-		note.getStyleClass().add("muted");
-		driversPane.getChildren().add(note);
-		
+	public void showDriversTab() {
+		tabs.select("Drivers");
 	}
 
 	private void buildVehiclesPane() {
