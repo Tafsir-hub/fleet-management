@@ -308,3 +308,13 @@
 .button.quick-action:hover {
     -fx-background-color: #E4E9F7;
 }
+
+.date-picker {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+}

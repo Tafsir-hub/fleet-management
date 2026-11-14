@@ -143,3 +143,10 @@ TC-08: Only Van-type vehicles shown (3)
 - Problems and fixes: the License column was squeezed by the wide Name column; fixed 
 
 
+### Step 3 - Add Driver dialog
+- Commit message: Slice 3 step 3: Add Driver dialog with date field and license type dropdown (AddDriverDialog, DateField)
+- What changed: + Add Driver opens a form (first name, last name, license type dropdown, hire date); a missing or invalid field shows a red message and keeps the dialog open; a saved driver appears in the list, selected, with a green message; new reusable DateField and LicenseTypes
+- Test cases touched: TC-09, TC-10 (checked on screen; the formal run is at the end of the slice)
+- Screenshots: ![Dialog](screens/drivers-step-03-add-dialog.png) ![Validation](screens/drivers-step-03-validation.png)
+- Problems and fixes: none
+

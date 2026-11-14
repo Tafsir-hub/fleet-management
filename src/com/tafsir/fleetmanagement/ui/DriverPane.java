@@ -3,6 +3,7 @@ package com.tafsir.fleetmanagement.ui;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import com.tafsir.fleetmanagement.dao.DriverDAO;
 import com.tafsir.fleetmanagement.model.Driver;
@@ -17,6 +18,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
+// The content of the Drivers tab: the list of drivers and the + Add button.
 
 public class DriverPane extends BorderPane{
 	
@@ -25,13 +29,13 @@ public class DriverPane extends BorderPane{
 	private final DriverDAO driverDAO = new DriverDAO();
 	private final TableView<Driver> table = new TableView<>();
 	private final Label countLabel = new Label();
+	private final MessageBar messageBar = new MessageBar();
 	
 	
 	public DriverPane() {
 		PrimaryButton addButton = new PrimaryButton("+ Add Driver");
 		addButton.setPrefWidth(200);
-		addButton.setOnAction(e ->
-				Dialogs.info("Coming soon", "The Add Driver form is built in the next step."));
+		addButton.setOnAction(e -> addDriver());
 		
 		HBox top = new HBox(addButton);
 		top.setAlignment(Pos.CENTER_RIGHT);
@@ -46,13 +50,30 @@ public class DriverPane extends BorderPane{
 		table.setPlaceholder(new Label("No drivers yet"));
 		
 		countLabel.getStyleClass().add("muted");
+		VBox bottom = new VBox(8, messageBar, countLabel);
 		BorderPane.setMargin(countLabel,new Insets(8, 0, 0, 0));
 		
 		setTop(top);
 		setCenter(table);
-		setBottom(countLabel);
+		setBottom(bottom);
 		loadDrivers();		
 		
+	}
+	
+	// Opens the dialog, saves the driver through the DAO, then shows it in the table.
+	private void addDriver() {
+		Optional<Driver> entered = new AddDriverDialog().showAndWait(getScene().getWindow());
+		if(!entered.isPresent()) {
+			return;
+		}
+		try {
+			int newId = driverDAO.addDriver(entered.get());
+			loadDrivers();
+			selectDriver(newId);
+			messageBar.success("Added " + displayId(newId) + ": " + entered.get().getFullName());
+		} catch (SQLException e) {
+			Dialogs.error("could not add the driver" , e.getMessage());
+		}
 	}
 
 	// Asks the DAO for every driver and shows them in the table.
@@ -66,5 +87,20 @@ public class DriverPane extends BorderPane{
 		}
 		
 	}
+	
+	private void selectDriver(int driverId) {
+		for (Driver d: table.getItems()) {
+			if (d.getDriverId() == driverId) {
+				table.getSelectionModel().select(d);
+				table.scrollTo(d);
+				return;
+			}
+		}
+	}
+	
+	//D-001 style. built in one place: the table column and the success message both use it
+	private static String displayId(int driverId) {
+        return String.format("D-%03d", driverId);
+    }
 
 }
