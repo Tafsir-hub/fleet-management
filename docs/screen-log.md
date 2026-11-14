@@ -158,3 +158,9 @@ TC-08: Only Van-type vehicles shown (3)
 - Screenshot: ![Status](screens/drivers-step-04-status.png)
 - Problems and fixes: none
 
+
+### Step 5 - Slice 3 test run
+- Commit message: Slice 3 complete: TC-09 to TC-11 run and logged
+- What changed: no code; the three driver test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
+- Test cases touched: TC-09, TC-10, TC-11 (the "cannot be assigned to new trips" part of TC-11 is proven in slice 4)
+- Problems and fixes: none during the run
