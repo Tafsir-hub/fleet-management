@@ -33,6 +33,20 @@ public class DriverDAO extends DBConnection {
 		return drivers;
 	}
 	
+	public List<Driver> findActive() throws SQLException {
+		String sql = new String ("SELECT * FROM drivers WHERE status = 'ACTIVE' ORDER BY last_name, first_name");
+		List<Driver> drivers = new ArrayList<>();
+		
+		try (Connection conn = getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				drivers.add(toDriver(rs));
+			}
+		}
+		return drivers;
+	}
+	
 	public int addDriver(Driver d) throws SQLException {
 		String sql = "INSERT INTO drivers (first_name, last_name, license_type, hire_date, status) "
 				+ "VALUES (?, ?, ?, ?, ?)";
