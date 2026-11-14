@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.tafsir.fleetmanagement.dao.DriverDAO;
 import com.tafsir.fleetmanagement.model.Driver;
+import com.tafsir.fleetmanagement.model.DriverStatus;
 import com.tafsir.fleetmanagement.ui.components.Dialogs;
 import com.tafsir.fleetmanagement.ui.components.PrimaryButton;
 import com.tafsir.fleetmanagement.ui.components.TableColumns;
@@ -15,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -48,6 +50,15 @@ public class DriverPane extends BorderPane{
 		table.getColumns().add(TableColumns.of("Status", "status", 120)); 
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 		table.setPlaceholder(new Label("No drivers yet"));
+		table.setRowFactory(tv -> {
+			TableRow<Driver> row = new TableRow<>();
+			row.setOnMouseClicked(e -> {
+				if(e.getClickCount()== 2 && !row.isEmpty()) {
+					updateDriver(row.getItem());
+				}
+			});
+			return row;
+		});
 		
 		countLabel.getStyleClass().add("muted");
 		VBox bottom = new VBox(8, messageBar, countLabel);
@@ -74,6 +85,29 @@ public class DriverPane extends BorderPane{
 		} catch (SQLException e) {
 			Dialogs.error("could not add the driver" , e.getMessage());
 		}
+	}
+	
+	private void updateDriver(Driver driver) {
+		UpdateDriverDialog dialog = new UpdateDriverDialog(driver, displayId(driver.getDriverId()));
+		if (!dialog.showAndWait(getScene().getWindow())) {
+			return; // the user cancelled
+		}
+		DriverStatus newStatus = dialog.getStatus();
+		if (newStatus == driver.getStatus()) {
+			return; 
+		}
+		 try {
+				if (driverDAO.updateStatus(driver.getDriverId(), newStatus)) {
+					loadDrivers();
+					selectDriver(driver.getDriverId());
+					messageBar.success(displayId(driver.getDriverId())+ ": " + driver.getFirstName()
+					+ " is now " + newStatus.getLabel()); 
+				} else {
+					Dialogs.error("Could not update the driver", " No driver with that ID was found");
+				}
+			} catch (SQLException e) {
+				Dialogs.error("Could not update the driver", e.getMessage());
+			}
 	}
 
 	// Asks the DAO for every driver and shows them in the table.

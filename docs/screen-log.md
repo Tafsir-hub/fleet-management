@@ -150,3 +150,11 @@ TC-08: Only Van-type vehicles shown (3)
 - Screenshots: ![Dialog](screens/drivers-step-03-add-dialog.png) ![Validation](screens/drivers-step-03-validation.png)
 - Problems and fixes: none
 
+
+### Step 4 - Change a driver's status
+- Commit message: Slice 3 step 4: change a driver's status by double-click (UpdateDriverDialog)
+- What changed: double-clicking a driver opens a small dialog with an Active / Inactive dropdown; a changed status is saved and shown with a green message; an unchanged status saves nothing
+- Test cases touched: TC-11 (status update; the "cannot be assigned to new trips" part is proven in slice 4)
+- Screenshot: ![Status](screens/drivers-step-04-status.png)
+- Problems and fixes: none
+
