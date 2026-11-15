@@ -172,3 +172,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: Trip model, TripDAO (addTrip, findByVehicle with driver join), DriverDAO.findActive, TripDAOTest
 - Test cases touched: groundwork for TC-12, TC-13, TC-14
 - Problems and fixes: none
+
+
+### Slice 4, Step 2 - Trips screen
+- Commit message: Add Trips screen with vehicle picker and trip history
+- Screenshot: ![Trips screen](screens/trips-step-02-screen.png)
+- What changed: TripScreen (vehicle dropdown, history table, count), Trips added to the sidebar navigation
+- Test cases touched: groundwork for TC-14
+- Problems and fixes: a missing break in the navigate switch also opened the "Coming later" dialog; added the break. Footer count was missing a space before "trip(s)"; fixed.

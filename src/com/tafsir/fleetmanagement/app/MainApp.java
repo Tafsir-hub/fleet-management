@@ -2,6 +2,7 @@ package com.tafsir.fleetmanagement.app;
 
 import com.tafsir.fleetmanagement.ui.LoginScreen;
 import com.tafsir.fleetmanagement.ui.MainMenuScreen;
+import com.tafsir.fleetmanagement.ui.TripScreen;
 import com.tafsir.fleetmanagement.ui.VehicleScreen;
 import com.tafsir.fleetmanagement.ui.components.AppShell;
 import com.tafsir.fleetmanagement.ui.components.Dialogs;
@@ -37,6 +38,10 @@ public class MainApp extends Application {
     	screen.showDriversTab();
     	show("FMAS \u2014 Vehicle Management", "Drivers", screen);
     }
+    
+    private void showTrips() {
+    	show("FMAS — Trip Logging", "Trips", new TripScreen());
+    }
 
     //>> The one place that builds a framed screen: header, sidebar and content.
     private void show(String title, String selectedNav, Node content) {
@@ -58,6 +63,9 @@ public class MainApp extends Application {
             case "Logout":
                 scene.setRoot(new LoginScreen(this::showMainMenu));   //>> a NEW login screen: empty fields (TC-29)
                 break;
+            case "Trips":
+            	showTrips();
+            	break;
             default:
                 Dialogs.info("Coming later", name + " is built in a later slice.");
         }
