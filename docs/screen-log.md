@@ -188,3 +188,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: New Trip form on TripScreen (vehicle, driver, date, origin, destination, miles, Save Trip); driver dropdown lists Active drivers only; history has a Vehicle column and separate Vehicle and Driver filters that are independent of the form; confirmation dialog warns that a saved trip cannot be changed or deleted; TripDAO.find(vehicleId, driverId) added
 - Test cases touched: groundwork for TC-12, TC-13 and TC-14
 - Problems and fixes: none
+
+
+### Slice 4, Step 4 - Slice 4 test run
+- Commit message: Slice 4 complete: TC-12 to TC-14 run and logged
+- Screenshots: ![TC-12](evidence/TC-12.png) ![TC-13](evidence/TC-13.png) ![TC-14](evidence/TC-14.png)
+- What changed: no code; the three trip test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
+- Test cases touched: TC-12, TC-13, TC-14 (also completes the "cannot be assigned to new trips" half of TC-11)
+- Problems and fixes: none during the run

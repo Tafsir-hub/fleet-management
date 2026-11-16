@@ -27,6 +27,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -107,7 +108,7 @@ public class TripScreen extends BorderPane {
         formBox.setPadding(new Insets(0, 0, 20, 0));
 
         // History header with the two filters
-        vehicleFilter.setPrefWidth(260);
+        vehicleFilter.setPrefWidth(320);
         driverFilter.setPrefWidth(200);
         vehicleFilter.valueProperty().addListener((obs, old, v) -> loadHistory());
         driverFilter.valueProperty().addListener((obs, old, v) -> loadHistory());
@@ -159,6 +160,12 @@ public class TripScreen extends BorderPane {
                 return d == null ? "" : d.getShortName();
             }
             @Override public Driver fromString(String s) { return null; }
+        });
+        driverBox.setButtonCell(new ListCell<Driver>() {
+            @Override protected void updateItem(Driver d, boolean empty) {
+                super.updateItem(d, empty);
+                setText(empty || d == null ? "Select a driver" : d.getShortName());
+            }
         });
     }
 
