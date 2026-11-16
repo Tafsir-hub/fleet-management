@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.util.StringConverter;
 
@@ -38,15 +39,30 @@ public class DateField extends DatePicker {
 		
 	}
 	
+	public void setMaxDate(LocalDate max) {
+	    setDayCellFactory(picker -> new DateCell() {
+	        @Override
+	        public void updateItem(LocalDate item, boolean empty) {
+	            super.updateItem(item, empty);
+	            if (!empty && item != null && item.isAfter(max)) {
+	                setDisable(true);
+	                setStyle("-fx-opacity: 0.4;");
+	            }
+	        }
+	    });
+	}
+	
 	// The date in the box, or null if it is empty or not a valid date.
-			public LocalDate getDate() {
-				return getConverter().fromString(getEditor().getText());
-			}
+	public LocalDate getDate() {
+		return getConverter().fromString(getEditor().getText());
+	}
 			
-			// True if nothing has been typed or picked.
-			public boolean isBlank() {
-				String text = getEditor().getText();
-				return text == null || text.trim().isEmpty();
-			}
+	// True if nothing has been typed or picked.
+	public boolean isBlank() {
+		String text = getEditor().getText();
+		return text == null || text.trim().isEmpty();
+	}
+			
+			
 	
 }

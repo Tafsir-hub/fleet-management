@@ -292,6 +292,12 @@
     -fx-text-fill: #1E2761;
 }
 
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e2761;
+}
+
 .button.quick-action {
     -fx-background-color: #F3F5FC;
     -fx-background-radius: 10;

@@ -1,5 +1,7 @@
 package com.tafsir.fleetmanagement.logic;
 
+import java.time.LocalDate;
+
 import com.tafsir.fleetmanagement.model.VehicleStatus;
 
 public class Validator {
@@ -26,4 +28,11 @@ public class Validator {
 	public boolean validStatus(VehicleStatus status) {
 		return status != null;
 	}
+    public static boolean validTripDate(LocalDate date) {
+        return date != null && !date.isAfter(LocalDate.now());
+    }
+
+    public static boolean validTripMiles(double miles) {
+        return miles > 0 && !Double.isInfinite(miles);
+    }
 }

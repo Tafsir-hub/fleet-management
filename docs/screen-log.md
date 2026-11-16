@@ -180,3 +180,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: TripScreen (vehicle dropdown, history table, count), Trips added to the sidebar navigation
 - Test cases touched: groundwork for TC-14
 - Problems and fixes: a missing break in the navigate switch also opened the "Coming later" dialog; added the break. Footer count was missing a space before "trip(s)"; fixed.
+
+
+### Slice 4, Step 3 - New Trip form, history filters and confirmation
+- Commit message: Add New Trip form, history filters and save confirmation to the Trips screen
+- Screenshots: ![New Trip form](screens/trips-step-03-new-trip-form.png) ![Save confirmation](screens/trips-step-03-confirm.png)
+- What changed: New Trip form on TripScreen (vehicle, driver, date, origin, destination, miles, Save Trip); driver dropdown lists Active drivers only; history has a Vehicle column and separate Vehicle and Driver filters that are independent of the form; confirmation dialog warns that a saved trip cannot be changed or deleted; TripDAO.find(vehicleId, driverId) added
+- Test cases touched: groundwork for TC-12, TC-13 and TC-14
+- Problems and fixes: none

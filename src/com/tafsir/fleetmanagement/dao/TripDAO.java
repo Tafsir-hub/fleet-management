@@ -11,6 +11,12 @@ import java.util.List;
 import com.tafsir.fleetmanagement.model.Trip;
 
 public class TripDAO extends DBConnection {
+	
+	private static final String SELECT =
+            "SELECT t.trip_id, t.vehicle_id, t.driver_id, t.trip_date, t.origin, t.destination, t.miles, "
+          + "CONCAT(LEFT(d.first_name, 1), '. ', d.last_name) AS driver_name "
+          + "FROM trips t JOIN drivers d ON d.driver_id = t.driver_id ";
+    private static final String ORDER = "ORDER BY t.trip_date DESC, t.trip_id DESC";
 
     // Saves a trip and returns the new trip_id
     public int addTrip(Trip t) throws SQLException {
@@ -31,27 +37,34 @@ public class TripDAO extends DBConnection {
         }
     }
 
-    // Trip history for one vehicle, newest first, with the driver's name from the drivers table
-    public List<Trip> findByVehicle(int vehicleId) throws SQLException {
-        String sql = "SELECT t.trip_id, t.vehicle_id, t.driver_id, t.trip_date, t.origin, "
-                   + "t.destination, t.miles, CONCAT(LEFT(d.first_name, 1), '. ', d.last_name) AS driver_name "
-                   + "FROM trips t JOIN drivers d ON d.driver_id = t.driver_id "
-                   + "WHERE t.vehicle_id = ? ORDER BY t.trip_date DESC, t.trip_id DESC";
+    // Any combination of filters; null means "all"
+    public List<Trip> find(Integer vehicleId, Integer driverId) throws SQLException {
+        String sql = SELECT
+                + "WHERE (? IS NULL OR t.vehicle_id = ?) AND (? IS NULL OR t.driver_id = ?) "
+                + ORDER;
         List<Trip> list = new ArrayList<>();
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, vehicleId);
+            ps.setObject(1, vehicleId);
+            ps.setObject(2, vehicleId);
+            ps.setObject(3, driverId);
+            ps.setObject(4, driverId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Trip t = new Trip(rs.getInt("trip_id"), rs.getInt("vehicle_id"),
-                            rs.getInt("driver_id"), rs.getDate("trip_date").toLocalDate(),
-                            rs.getString("origin"), rs.getString("destination"),
-                            rs.getDouble("miles"));
-                    t.setDriverName(rs.getString("driver_name"));
-                    list.add(t);
-                }
+                while (rs.next()) list.add(toTrip(rs));
             }
         }
         return list;
+    }
+
+    public List<Trip> findByVehicle(int vehicleId) throws SQLException {
+        return find(vehicleId, null);
+    }
+
+    private Trip toTrip(ResultSet rs) throws SQLException {
+        Trip t = new Trip(rs.getInt("trip_id"), rs.getInt("vehicle_id"), rs.getInt("driver_id"),
+                rs.getDate("trip_date").toLocalDate(), rs.getString("origin"),
+                rs.getString("destination"), rs.getDouble("miles"));
+        t.setDriverName(rs.getString("driver_name"));
+        return t;
     }
 }

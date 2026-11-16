@@ -52,6 +52,8 @@ public class AddDriverDialog {
 		licenseBox.getItems().addAll(LicenseTypes.ALL);
 		licenseBox.setPromptText("Select a type");
 		licenseBox.setMaxWidth(Double.MAX_VALUE);
+		hireDateField.setMaxDate(LocalDate.now());
+		
 		
 		
 		VBox form = new VBox(14, firstNameRow, lastNameRow, licenseRow, hireDateRow);
