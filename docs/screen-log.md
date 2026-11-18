@@ -196,3 +196,19 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: no code; the three trip test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
 - Test cases touched: TC-12, TC-13, TC-14 (also completes the "cannot be assigned to new trips" half of TC-11)
 - Problems and fixes: none during the run
+
+
+### Slice 5, Step 1 - Fuel data layer
+- Commit message: Add FuelEntry class and FuelDAO
+- Screenshot: ![FuelDAOTest output](screens/fuel-step-01-fueldaotest.png)
+- What changed: FuelEntry model (total cost = gallons x price, rounded half-up to the cent), FuelDAO (addFuel, findByVehicle, findAll), FuelDAOTest
+- Test cases touched: groundwork for TC-15 and TC-16
+- Problems and fixes: none
+
+
+### Slice 5, Step 2 - Fuel screen
+- Commit message: Slice 5 step 2: Add Fuel screen with history table and vehicle filter
+- Screenshot: ![Fuel screen](screens/fuel-step-02-fuel-screen.png)
+- What changed: FuelScreen with Fuel and Maintenance tabs (Maintenance is a placeholder), recent entries table (Date, Vehicle, Gallons, Price / Gal shown with 2 decimals, Total Cost), vehicle filter, count label; Fuel added to the sidebar navigation
+- Test cases touched: groundwork for TC-15 and TC-16
+- Problems and fixes: none
