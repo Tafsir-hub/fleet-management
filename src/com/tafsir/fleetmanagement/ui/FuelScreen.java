@@ -1,5 +1,6 @@
 package com.tafsir.fleetmanagement.ui;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -96,6 +97,7 @@ public class FuelScreen extends BorderPane {
     	gallonsField.textProperty().addListener((obs, old, v) -> updateTotal());
     	priceField.textProperty().addListener((obs, old, v) -> updateTotal());
     	updateTotal();
+    	saveButton.setOnAction(e -> saveFuel());
     	
     	GridPane form = new GridPane();
     	form.setHgap(16);
@@ -199,6 +201,81 @@ public class FuelScreen extends BorderPane {
     	totalLabel.setText("Total: $0.00 (auto-calculated)");
     }
     
+    private void saveFuel() {
+    	Vehicle v = vehicleBox.getValue();
+    	LocalDate date = dateField.getDate();
+    	
+    	// Checks in field order; the first problem is shown
+    	if (v == null) { fail("Choose a vehicle", vehicleBox); return;}
+    	if (date == null) {fail("Enter a valid date, like 11/15/2026", dateField); return;}
+    	if (!Validator.validTripDate(date)) {
+    		fail("Fuel date cannot be in the future", dateField); return;}
+    	
+    	String gallonsText = gallonsField.getText().trim();
+    	String priceText = priceField.getText().trim();
+    	
+    	double gallons;
+    	try {
+    		gallons = Double.parseDouble(gallonsText);	
+    	} catch (NumberFormatException ex) {
+    		fail("Gallons must be a number, like 18.4", gallonsField);
+    		return;    		
+    	}
+    	if (!Validator.validGallons(gallons)) { fail("Gallons must be greater that 0", gallonsField); return;}
+    	if (decimals(gallonsText) > 1) {fail("Gallons can have at most 1 decimal, like 18.4", gallonsField); return;}
+    	
+    	double price;
+    	try {
+    		price = Double.parseDouble(priceText);
+    	} catch (NumberFormatException ex) {
+    		fail("price per gallon must be a number, like 3.62", priceField);
+    		return;
+    	}
+    	if (!Validator.validGallons(gallons)) { fail("Gallons must be greater than 0", gallonsField); return;}
+    	if (decimals(priceText) > 2) {fail("price per gallon can have at most 2 decimals, like 3.62", priceField); return;}
+    	
+    	try {
+    		double total = FuelEntry.calculateTotal(gallons, price);
+    		int id = fuelDAO.addFuel(new FuelEntry(0, v.getVehicleId(), date, gallons, price));
+    		gallonsField.clear();
+    		priceField.clear();
+    		loadEntries();
+    		boolean shown = selectEntry(id);
+    		messageBar.success(String.format("Saved fuel entry: %s, %.1f gal, $%,.2f",
+    				vehicleLabel(v.getVehicleId()), gallons, total)
+    				+ (shown ? "" : " (not shown in the history because of the current filter)"));
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		messageBar.error("Could not save the fuel Entry");
+    	}
+    }
+    
+    // Red message plus the cursor on the field that needs fixing
+    private void fail(String text, Node field) {
+    	messageBar.error(text);
+    	field.requestFocus();
+    	
+    }
+    
+    private int decimals(String text) {
+    	try {
+    		return Math.max(0, new BigDecimal(text).stripTrailingZeros().scale());
+    	} catch (NumberFormatException e) {
+    		return 99; // things like "18d" or "NaN" are not plain numbers
+    	}
+    }
+    
+    // Highlights the new row in the history
+    private boolean selectEntry(int fuelId) {
+    	for (FuelEntry f : table.getItems()) {
+    		if (f.getFuelId() == fuelId) {
+    			table.getSelectionModel().select(f);
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+        
     private List<Vehicle> activeOnly(List<Vehicle> all) {
     	List<Vehicle> active = new ArrayList<>();
     	for (Vehicle x : all) {
