@@ -212,3 +212,13 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: FuelScreen with Fuel and Maintenance tabs (Maintenance is a placeholder), recent entries table (Date, Vehicle, Gallons, Price / Gal shown with 2 decimals, Total Cost), vehicle filter, count label; Fuel added to the sidebar navigation
 - Test cases touched: groundwork for TC-15 and TC-16
 - Problems and fixes: none
+
+
+
+### Slice 5, Step 3 - Fuel entry form with live total
+- Commit message: Slice 5 step 3: Add Fuel entry form with live total
+- Screenshot: ![Fuel entry form](screens/fuel-step-03-form.png)
+- What changed: FuelScreen split into buildForm and buildHistory; New Fuel Entry form (Active vehicles only, date that cannot pass today, gallons, price per gallon) with an auto-calculated total that updates as you type; Validator.validGallons and validCost added; Save button is not wired yet (step 4)
+- Test cases touched: groundwork for TC-15 and TC-16
+- Problems and fixes: the total stayed at 0.00 because the new Validator methods tested isFinite where they should have tested "not infinite", so valid numbers were rejected; fixed. Eclipse also stopped compiling the project (build path error on java.lang.Enum) and kept running old classes; fixed by pointing the project at a full JDK
+

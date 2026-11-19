@@ -1,26 +1,38 @@
 package com.tafsir.fleetmanagement.ui;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.tafsir.fleetmanagement.dao.FuelDAO;
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
+import com.tafsir.fleetmanagement.logic.Validator;
 import com.tafsir.fleetmanagement.model.FuelEntry;
 import com.tafsir.fleetmanagement.model.Vehicle;
+import com.tafsir.fleetmanagement.model.VehicleStatus;
+import com.tafsir.fleetmanagement.ui.components.DateField;
 import com.tafsir.fleetmanagement.ui.components.TabSwitch;
 import com.tafsir.fleetmanagement.ui.components.TableColumns;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 public class FuelScreen extends BorderPane {
 
@@ -28,7 +40,16 @@ public class FuelScreen extends BorderPane {
 
     private final FuelDAO fuelDAO = new FuelDAO();
     private final VehicleDAO vehicleDAO = new VehicleDAO();
+    
+    // Form
+    private final ComboBox<Vehicle> vehicleBox = new ComboBox<>();
+    private final DateField dateField = new DateField();
+    private final TextField gallonsField = new TextField();
+    private final TextField priceField = new TextField();
+    private final Label totalLabel = new Label();
+    private final Button saveButton = new Button("Save Fuel Entry");
 
+    // History
     private final ComboBox<String> vehicleFilter = new ComboBox<>();
     private final TableView<FuelEntry> table = new TableView<>();
     private final Label historyTitle = new Label();
@@ -46,6 +67,7 @@ public class FuelScreen extends BorderPane {
         setTop(tabs);
         BorderPane.setMargin(tabs, new Insets(0, 0, 16, 0));
 
+        buildVehicleBox();
         buildFuelPane();
         buildMaintenancePane();
         showTab("Fuel");
@@ -58,9 +80,54 @@ public class FuelScreen extends BorderPane {
     private void showTab(String tab) {
         setCenter("Maintenance".equals(tab) ? maintenancePane : fuelPane);
     }
-
+    
     private void buildFuelPane() {
-        historyTitle.getStyleClass().add("section-title");
+    	fuelPane.setTop(buildForm());
+    	fuelPane.setCenter(buildHistory());
+    }
+  //----------------Form---------------------
+
+    private VBox buildForm() {
+    	    	
+    	dateField.setValue(LocalDate.now());
+    	dateField.setMaxDate(LocalDate.now());
+    	gallonsField.setPromptText("18.4");
+    	priceField.setPromptText("3.62");
+    	gallonsField.textProperty().addListener((obs, old, v) -> updateTotal());
+    	priceField.textProperty().addListener((obs, old, v) -> updateTotal());
+    	updateTotal();
+    	
+    	GridPane form = new GridPane();
+    	form.setHgap(16);
+    	form.setVgap(12);
+    	for (int i = 0; i < 4; i++) {
+    		ColumnConstraints  cc = new ColumnConstraints();
+    		cc.setPercentWidth(25);
+    		form.getColumnConstraints().add(cc);
+    	}
+    	form.add(field("VEHICLE", vehicleBox), 0, 0);
+    	form.add(field("DATE", dateField), 1, 0);
+    	form.add(field("GALLONS", gallonsField), 2, 0);
+    	form.add(field("PRICE / GAL ($)", priceField) , 3, 0);
+    	
+    	totalLabel.setStyle("-fx-font-weight: bold;");
+    	Region spacer = new Region();
+    	HBox.setHgrow(spacer, Priority.ALWAYS);
+    	HBox buttonRow = new HBox(12, totalLabel, spacer, saveButton);
+    	buttonRow.setAlignment(Pos.CENTER_LEFT);
+    	
+    	Label formTitle = new Label("NEW FUEL ENTRY");
+    	formTitle.getStyleClass().add("section-title");
+    	VBox formBox = new VBox(12, formTitle, form, buttonRow);
+    	formBox.setPadding(new Insets(0, 0, 20, 0));
+    	return formBox;
+    }
+        
+    // ---------------History-------------------
+    
+    private VBox buildHistory() {
+    	
+    	historyTitle.getStyleClass().add("section-title");
         vehicleFilter.setPrefWidth(320);
 
         HBox header = new HBox(12, historyTitle, new Label("Vehicle"), vehicleFilter);
@@ -84,17 +151,62 @@ public class FuelScreen extends BorderPane {
         VBox bottom = new VBox(8, messageBar, countLabel);
         bottom.setPadding(new Insets(8, 0, 0, 0));
 
-        fuelPane.setTop(header);
-        fuelPane.setCenter(table);
-        fuelPane.setBottom(bottom);
+        VBox history = new VBox(8, header, table, bottom);
+        VBox.setVgrow(table, Priority.ALWAYS);
+        return history;
     }
+    	
+        
+    
 
     private void buildMaintenancePane() {
         Label soon = new Label("Maintenance records are built in a later slice.");
         soon.getStyleClass().add("muted");
         maintenancePane.setCenter(soon);
     }
-
+    
+    private void buildVehicleBox() {
+    	vehicleBox.setPromptText("Select a vehicle");
+    	vehicleBox.setConverter(new StringConverter<Vehicle>() {
+    		@Override public String toString(Vehicle v) {
+    			return v == null ? "" : v.getMakeModel() + " (" + String.format("V-%03d", v.getVehicleId()) + ")";
+    		}
+    		@Override public Vehicle fromString(String s) {
+    			return null;}
+    		});
+    }
+    
+    // Small label above a control, like the Trips form
+    private VBox field(String caption, Node control) {
+    	if (control instanceof Region) {
+    		((Region) control).setMaxWidth(Double.MAX_VALUE);
+    	}
+    	return new VBox(4, new Label(caption), control);
+    }
+    
+    // Recalculates "Total: $x.xx" every time gallons or price changes
+    private void updateTotal() {
+    	try {
+    		double g = Double.parseDouble(gallonsField.getText().trim());
+    		double p = Double.parseDouble(priceField.getText().trim());
+    		if (Validator.validGallons(g) && Validator.validCost(p)) {
+    			totalLabel.setText(String.format("Total: $%,.2f (auto-calculated)", FuelEntry.calculateTotal(g, p)));
+    			return;
+    		}
+    	} catch (NumberFormatException e) {
+    		// nothing to calculate yet
+    	}
+    	totalLabel.setText("Total: $0.00 (auto-calculated)");
+    }
+    
+    private List<Vehicle> activeOnly(List<Vehicle> all) {
+    	List<Vehicle> active = new ArrayList<>();
+    	for (Vehicle x : all) {
+    		if (x.getStatus() == VehicleStatus.ACTIVE) active.add(x);
+    	}
+    	return active;
+    }
+    
     // Fills the vehicle filter: "All vehicles" first, then every vehicle (history includes inactive ones)
     private void loadVehicles() {
         try {
@@ -103,6 +215,7 @@ public class FuelScreen extends BorderPane {
             e.printStackTrace();
             vehicles = new ArrayList<>();
         }
+        vehicleBox.setItems(FXCollections.observableArrayList(activeOnly(vehicles)));
         List<String> labels = new ArrayList<>();
         labels.add("All vehicles");
         for (Vehicle v : vehicles) labels.add(vehicleLabel(v.getVehicleId()));

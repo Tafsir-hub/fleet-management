@@ -35,4 +35,11 @@ public class Validator {
     public static boolean validTripMiles(double miles) {
         return miles > 0 && !Double.isInfinite(miles);
     }
+    public static boolean validGallons(double gallons) {
+        return gallons > 0 && !Double.isInfinite(gallons);
+    }
+
+    public static boolean validCost(double cost) {
+        return cost > 0 && !Double.isInfinite(cost);
+    }
 }
