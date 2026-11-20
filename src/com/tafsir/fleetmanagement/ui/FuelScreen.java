@@ -21,7 +21,10 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -235,7 +238,18 @@ public class FuelScreen extends BorderPane {
     	if (decimals(priceText) > 2) {fail("price per gallon can have at most 2 decimals, like 3.62", priceField); return;}
     	
     	try {
-    		double total = FuelEntry.calculateTotal(gallons, price);
+    		if (!checkStillActive(v)) return;
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		messageBar.error("Could not check the vehicle");
+    		return;
+    	}
+    	
+    	// Go back (or closing the dialog) stops here; nothing is saved
+    	double total = FuelEntry.calculateTotal(gallons, price);
+    	if(!confirmSave(v, date, gallons, price, total)) return;
+    	
+    	try {
     		int id = fuelDAO.addFuel(new FuelEntry(0, v.getVehicleId(), date, gallons, price));
     		gallonsField.clear();
     		priceField.clear();
@@ -255,6 +269,49 @@ public class FuelScreen extends BorderPane {
     	messageBar.error(text);
     	field.requestFocus();
     	
+    }
+    
+    private boolean checkStillActive(Vehicle v) throws SQLException {
+    	boolean active = false;
+    	for (Vehicle x : vehicleDAO.findAll(null, null)) {
+    		if (x.getVehicleId() == v.getVehicleId() && x.getStatus() == VehicleStatus.ACTIVE) {
+                active = true;
+            }
+    	}
+    	if (active) return true;
+    	
+    	// Refresh the dropdown and clear the stale pick
+    	vehicleBox.setItems(FXCollections.observableArrayList(activeOnly(vehicleDAO.findAll(null, null))));
+    	vehicleBox.setValue(null);
+    	messageBar.error(vehicleLabel(v.getVehicleId()) + "is no longer Active. Choose another vehicle.");
+    	return false;
+    }
+    
+    private boolean confirmSave(Vehicle v, LocalDate date, double gallons, double price, double total) {
+    	ButtonType save = new ButtonType("Save Entry", ButtonBar.ButtonData.OK_DONE);
+    	ButtonType back = new ButtonType("Go Back", ButtonBar.ButtonData.CANCEL_CLOSE);
+    	
+    	Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", save, back);
+    	alert.initOwner(getScene().getWindow());
+    	alert.setTitle("FMAS");
+    	alert.setHeaderText("Save this fuel entry?");
+    	
+    	Label details = new Label(
+    			"Vehicle: " + vehicleLabel(v.getVehicleId()) + "\n"
+    			+ "Date: " + date.format(DATE_FMT) + "\n"
+    			+ String.format("Gallons: %.1f\n", gallons)
+    			+ String.format("Price per gallon: $%.2f\n", price)
+    			+String.format("Total cost: $%,.2f", total));
+    	Label warning = new Label("A saved fuel entry cannot be changed or deleted.");
+    	warning.setStyle("-fx-text-fill: #b3261e; -fx-font-weight: bold;");
+    	
+    	alert.getDialogPane().setContent(new VBox(12, details, warning));
+    	
+    	// Go back is the default button, so pression Enter by accident does not save 
+    	((Button) alert.getDialogPane().lookupButton(save)).setDefaultButton(false);
+    	((Button) alert.getDialogPane().lookupButton(back)).setDefaultButton(true);
+    	
+    	return alert.showAndWait().filter(b -> b == save).isPresent();
     }
     
     private int decimals(String text) {

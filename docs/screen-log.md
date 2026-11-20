@@ -214,7 +214,6 @@ TC-08: Only Van-type vehicles shown (3)
 - Problems and fixes: none
 
 
-
 ### Slice 5, Step 3 - Fuel entry form with live total
 - Commit message: Slice 5 step 3: Add Fuel entry form with live total
 - Screenshot: ![Fuel entry form](screens/fuel-step-03-form.png)
@@ -222,3 +221,18 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: groundwork for TC-15 and TC-16
 - Problems and fixes: the total stayed at 0.00 because the new Validator methods tested isFinite where they should have tested "not infinite", so valid numbers were rejected; fixed. Eclipse also stopped compiling the project (build path error on java.lang.Enum) and kept running old classes; fixed by pointing the project at a full JDK
 
+
+### Slice 5, Step 4 - Validate and save fuel entries
+- Commit message: Slice 5 step 4: Validate and save fuel entries
+- Screenshots: ![Validation message](screens/fuel-step-04-error.png) ![Fuel entry saved](screens/fuel-step-04-saved.png)
+- What changed: Save Fuel Entry now checks the fields in order and shows a red message for the first problem (vehicle, date, gallons, price per gallon; gallons limited to 1 decimal and price to 2); a valid entry is saved with FuelDAO.addFuel, the history refreshes, the new row is highlighted and a green message shows the total
+- Test cases touched: groundwork for TC-15 and TC-16
+- Problems and fixes: none
+
+
+### Slice 5, Step 5 - Save confirmation and Active vehicle check
+- Commit message: Slice 5 step 5: Add save confirmation and Active vehicle check
+- Screenshots: ![Save confirmation](screens/fuel-step-05-confirm.png) ![Active vehicles only](screens/fuel-step-05-inactive.png)
+- What changed: Save Fuel Entry now shows a confirmation (vehicle, date, gallons, price per gallon, total) with a red warning that a saved fuel entry cannot be changed or deleted, and Go Back as the default button; the vehicle is re-read from the database before saving and the entry is refused if it is no longer Active; the vehicle dropdown lists Active vehicles only
+- Test cases touched: groundwork for TC-15 and TC-16
+- Problems and fixes: none
