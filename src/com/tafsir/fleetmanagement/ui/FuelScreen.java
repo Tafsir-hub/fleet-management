@@ -224,7 +224,7 @@ public class FuelScreen extends BorderPane {
     		fail("Gallons must be a number, like 18.4", gallonsField);
     		return;    		
     	}
-    	if (!Validator.validGallons(gallons)) { fail("Gallons must be greater that 0", gallonsField); return;}
+    	if (!Validator.validGallons(gallons)) { fail("Gallons must be greater than 0", gallonsField); return;}
     	if (decimals(gallonsText) > 1) {fail("Gallons can have at most 1 decimal, like 18.4", gallonsField); return;}
     	
     	double price;

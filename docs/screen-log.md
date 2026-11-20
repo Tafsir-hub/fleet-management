@@ -236,3 +236,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: Save Fuel Entry now shows a confirmation (vehicle, date, gallons, price per gallon, total) with a red warning that a saved fuel entry cannot be changed or deleted, and Go Back as the default button; the vehicle is re-read from the database before saving and the entry is refused if it is no longer Active; the vehicle dropdown lists Active vehicles only
 - Test cases touched: groundwork for TC-15 and TC-16
 - Problems and fixes: none
+
+
+### Slice 5, Step 6 - Slice 5 test run
+- Commit message: Slice 5 complete: TC-15 and TC-16 run and logged
+- Screenshots: ![TC-15](evidence/TC-15.png) ![TC-16](evidence/TC-16.png)
+- What changed: fixed a typo in the gallons message ("that" to "than"); the two fuel test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
+- Test cases touched: TC-15, TC-16
+- Problems and fixes: the gallons message had a typo, found while taking the evidence screenshot; fixed and the screenshot retaken
