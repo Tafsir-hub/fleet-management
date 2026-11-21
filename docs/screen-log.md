@@ -165,7 +165,7 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: TC-09, TC-10, TC-11 (the "cannot be assigned to new trips" part of TC-11 is proven in slice 4)
 - Problems and fixes: none during the run
 
-
+## Trips (slice 4)
 
 ### Slice 4, Step 1 - Trip data layer
 - Commit message: Add Trip class, TripDAO and active driver lookup
@@ -197,9 +197,10 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: TC-12, TC-13, TC-14 (also completes the "cannot be assigned to new trips" half of TC-11)
 - Problems and fixes: none during the run
 
+## Fuel (slice 5)
 
 ### Slice 5, Step 1 - Fuel data layer
-- Commit message: Add FuelEntry class and FuelDAO
+- Commit message: Slice 5 step 1: FuelEntry, FuelDAO and FuelDAOTest
 - Screenshot: ![FuelDAOTest output](screens/fuel-step-01-fueldaotest.png)
 - What changed: FuelEntry model (total cost = gallons x price, rounded half-up to the cent), FuelDAO (addFuel, findByVehicle, findAll), FuelDAOTest
 - Test cases touched: groundwork for TC-15 and TC-16
@@ -215,7 +216,7 @@ TC-08: Only Van-type vehicles shown (3)
 
 
 ### Slice 5, Step 3 - Fuel entry form with live total
-- Commit message: Slice 5 step 3: Add Fuel entry form with live total
+- Commit message: Slice 5 step 3: Add Fuel entry form with live total. Include Validator.java, FuelScreen.java
 - Screenshot: ![Fuel entry form](screens/fuel-step-03-form.png)
 - What changed: FuelScreen split into buildForm and buildHistory; New Fuel Entry form (Active vehicles only, date that cannot pass today, gallons, price per gallon) with an auto-calculated total that updates as you type; Validator.validGallons and validCost added; Save button is not wired yet (step 4)
 - Test cases touched: groundwork for TC-15 and TC-16
@@ -245,6 +246,7 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: TC-15, TC-16
 - Problems and fixes: the gallons message had a typo, found while taking the evidence screenshot; fixed and the screenshot retaken
 
+## Maintenance (slice 6)
 
 ### Slice 6, Step 1 - Maintenance data layer
 - Commit message: Slice 6 step 1: MaintenanceRecord and MaintenanceDAO
@@ -268,10 +270,17 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: groundwork for TC-18 and TC-19
 - Problems and fixes: none
 
-
 ### Slice 6, Step 4 - Validate and save maintenance records
-- Commit message: Slice 6 step 4: Validate and save maintenance records
+- Commit message: Validate and save maintenance records
 - Screenshots: ![Validation message](screens/maint-step-04-error.png) ![Record saved](screens/maint-step-04-saved.png)
 - What changed: Save Maintenance Record now checks the fields in order and shows a red message for the first problem (vehicle, date, service type, cost greater than 0 with at most 2 decimals, whole-number mileage that cannot be above the vehicle's current mileage); a valid record is saved with MaintenanceDAO.addRecord, the history refreshes, the new row is highlighted and a green message shows
 - Test cases touched: groundwork for TC-18 and TC-19
 - Problems and fixes: the form label VEHICLE was misspelled and the service type box lost its hint after a save; both fixed
+
+
+### Slice 6, Step 5 - Save confirmation and vehicle re-check
+- Commit message: Slice 6 step 5: Add save confirmation and vehicle re-check
+- Screenshot: ![Save confirmation](screens/maint-step-05-confirm.png)
+- What changed: Save Maintenance Record now shows a confirmation (vehicle, date, service, cost, mileage) with a red warning that a saved maintenance record cannot be changed or deleted, and Go Back as the default button; the vehicle is re-read from the database before saving, so a vehicle that has been retired is refused and the mileage check uses the current mileage
+- Test cases touched: groundwork for TC-18 and TC-19
+- Problems and fixes: none

@@ -20,7 +20,10 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -238,11 +241,34 @@ public class MaintenancePane extends BorderPane {
             return;
         }
         if (mileage < 0) { fail("Mileage cannot be negative", mileageField); return; }
+        
+        // The screen may be out of date: re-read the vehicle (it may be Retired now, or its mileage may have changed)
+        try {
+            Vehicle fresh = null;
+            for (Vehicle x : vehicleDAO.findAll(null, null)) {
+                if (x.getVehicleId() == v.getVehicleId()) fresh = x;
+            }
+            if (fresh == null || fresh.getStatus() == VehicleStatus.RETIRED) {
+                loadVehicles();
+                vehicleBox.setValue(null);
+                messageBar.error(vehicleLabel(v.getVehicleId()) + " is Retired. Choose another vehicle.");
+                return;
+            }
+            v = fresh;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            messageBar.error("Could not check the vehicle");
+            return;
+        }
+
         if (mileage > v.getMileage()) {
             fail(String.format("Mileage cannot be more than the vehicle's current mileage (%,d). Update the vehicle first.",
                     v.getMileage()), mileageField);
             return;
         }
+
+        // Go Back (or closing the dialog) stops here; nothing is saved
+        if (!confirmSave(v, date, service, cost, mileage)) return;
 
         try {
             int id = maintenanceDAO.addRecord(new MaintenanceRecord(0, v.getVehicleId(), date, service, cost, mileage));
@@ -286,6 +312,34 @@ public class MaintenancePane extends BorderPane {
             }
         }
         return false;
+    }
+    
+    private boolean confirmSave(Vehicle v, LocalDate date, String service, double cost, int mileage) {
+        ButtonType save = new ButtonType("Save Record", ButtonBar.ButtonData.OK_DONE);
+        ButtonType back = new ButtonType("Go Back", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", save, back);
+        alert.initOwner(getScene().getWindow());
+        alert.setTitle("FMAS");
+        alert.setHeaderText("Save this maintenance record?");
+
+        Label details = new Label(
+                "Vehicle: " + vehicleLabel(v.getVehicleId()) + "\n"
+              + "Date: " + date.format(DATE_FMT) + "\n"
+              + "Service: " + service + "\n"
+              + String.format("Cost: $%,.2f\n", cost)
+              + String.format("Mileage: %,d", mileage));
+
+        Label warning = new Label("A saved maintenance record cannot be changed or deleted.");
+        warning.setStyle("-fx-text-fill: #b3261e; -fx-font-weight: bold;");
+
+        alert.getDialogPane().setContent(new VBox(12, details, warning));
+
+        // Go Back is the default button, so pressing Enter by accident does not save
+        ((Button) alert.getDialogPane().lookupButton(save)).setDefaultButton(false);
+        ((Button) alert.getDialogPane().lookupButton(back)).setDefaultButton(true);
+
+        return alert.showAndWait().filter(b -> b == save).isPresent();
     }
     
 	// ---------------Loading------------------

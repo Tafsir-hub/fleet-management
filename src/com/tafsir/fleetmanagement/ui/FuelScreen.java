@@ -228,11 +228,11 @@ public class FuelScreen extends BorderPane {
     	try {
     		price = Double.parseDouble(priceText);
     	} catch (NumberFormatException ex) {
-    		fail("price per gallon must be a number, like 3.62", priceField);
+    		fail("Price per gallon must be a number, like 3.62", priceField);
     		return;
     	}
         if (!Validator.validCost(price)) { fail("Price per gallon must be greater than 0", priceField); return;}
-    	if (decimals(priceText) > 2) {fail("price per gallon can have at most 2 decimals, like 3.62", priceField); return;}
+    	if (decimals(priceText) > 2) {fail("Price per gallon can have at most 2 decimals, like 3.62", priceField); return;}
     	
     	try {
     		if (!checkStillActive(v)) return;
