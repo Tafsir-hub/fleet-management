@@ -260,3 +260,11 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: groundwork for TC-18 and TC-19
 - Problems and fixes: none
 
+
+### Slice 6, Step 3 - Maintenance form
+- Commit message: Slice 6 step 3: Add maintenance form
+- Screenshot: ![Maintenance form](screens/maint-step-03-form.png)
+- What changed: New Maintenance Record form above the history (vehicle, date that cannot pass today, service type dropdown with an Other option, cost, mileage); the vehicle list includes every vehicle that is not Retired, so vehicles In Repair can be serviced; Save is not wired yet (step 4)
+- Test cases touched: groundwork for TC-18 and TC-19
+- Problems and fixes: none
+
