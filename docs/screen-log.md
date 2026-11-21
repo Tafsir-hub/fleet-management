@@ -284,3 +284,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: Save Maintenance Record now shows a confirmation (vehicle, date, service, cost, mileage) with a red warning that a saved maintenance record cannot be changed or deleted, and Go Back as the default button; the vehicle is re-read from the database before saving, so a vehicle that has been retired is refused and the mileage check uses the current mileage
 - Test cases touched: groundwork for TC-18 and TC-19
 - Problems and fixes: none
+
+
+### Slice 6, Step 6 - Slice 6 test run
+- Commit message: Slice 6 complete: TC-18 and TC-19 run and logged
+- Screenshots: ![TC-18](evidence/TC-18.png) ![TC-19](evidence/TC-19.png)
+- What changed: no code; the two maintenance test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
+- Test cases touched: TC-18, TC-19
+- Problems and fixes: none during the run
