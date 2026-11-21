@@ -244,3 +244,19 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: fixed a typo in the gallons message ("that" to "than"); the two fuel test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
 - Test cases touched: TC-15, TC-16
 - Problems and fixes: the gallons message had a typo, found while taking the evidence screenshot; fixed and the screenshot retaken
+
+
+### Slice 6, Step 1 - Maintenance data layer
+- Commit message: Slice 6 step 1: MaintenanceRecord and MaintenanceDAO
+- What changed: MaintenanceRecord model, MaintenanceDAO (addRecord, findByVehicle, findAll, newest first), MaintenanceDAOTest
+- Test cases touched: groundwork for TC-18 and TC-19
+- Problems and fixes: none
+
+
+### Slice 6, Step 2 - Maintenance tab
+- Commit message: Slice 6 step 2: Add Maintenance tab with history table and vehicle filter
+- Screenshot: ![Maintenance tab](screens/maint-step-02-maintenance-tab.png)
+- What changed: MaintenancePane (maintenance history table with Date, Vehicle, Service, Cost and Mileage, a vehicle filter and a count) replaces the placeholder on the Maintenance tab; the Maintenance sidebar item now opens it
+- Test cases touched: groundwork for TC-18 and TC-19
+- Problems and fixes: none
+

@@ -47,6 +47,12 @@ public class MainApp extends Application {
     private void showFuel() {
         show("FMAS — Fuel & Maintenance", "Fuel", new FuelScreen());
     }
+    
+    private void showMaintenance() {
+        FuelScreen screen = new FuelScreen();
+        screen.showMaintenanceTab();
+        show("FMAS \u2014 Fuel & Maintenance", "Maintenance", screen);
+    }
 
     //>> The one place that builds a framed screen: header, sidebar and content.
     private void show(String title, String selectedNav, Node content) {
@@ -74,6 +80,9 @@ public class MainApp extends Application {
             case "Fuel":
                 showFuel();
                 break;
+            case "Maintenance":
+            	showMaintenance();
+            	break;
             default:
                 Dialogs.info("Coming later", name + " is built in a later slice.");
         }

@@ -60,20 +60,22 @@ public class FuelScreen extends BorderPane {
     private final Label countLabel = new Label();
     private final MessageBar messageBar = new MessageBar();
     private final BorderPane fuelPane = new BorderPane();
-    private final BorderPane maintenancePane = new BorderPane();
+    private final MaintenancePane maintenancePane = new MaintenancePane();
+    private TabSwitch tabs;
 
     private List<Vehicle> vehicles = new ArrayList<>();
 
     public FuelScreen() {
         setPadding(new Insets(18, 20, 14, 20));
-
-        TabSwitch tabs = new TabSwitch(this::showTab, "Fuel", "Maintenance");
+        
+        tabs = new TabSwitch(this::showTab, "Fuel", "Maintenance");
+        setTop(tabs);
+        
         setTop(tabs);
         BorderPane.setMargin(tabs, new Insets(0, 0, 16, 0));
 
         buildVehicleBox();
         buildFuelPane();
-        buildMaintenancePane();
         showTab("Fuel");
 
         loadVehicles();
@@ -83,6 +85,10 @@ public class FuelScreen extends BorderPane {
 
     private void showTab(String tab) {
         setCenter("Maintenance".equals(tab) ? maintenancePane : fuelPane);
+    }
+    
+    public void showMaintenanceTab() {
+    	tabs.select("Maintenance");
     }
     
     private void buildFuelPane() {
@@ -160,16 +166,7 @@ public class FuelScreen extends BorderPane {
         VBox.setVgrow(table, Priority.ALWAYS);
         return history;
     }
-    	
-        
-    
-
-    private void buildMaintenancePane() {
-        Label soon = new Label("Maintenance records are built in a later slice.");
-        soon.getStyleClass().add("muted");
-        maintenancePane.setCenter(soon);
-    }
-    
+    	    
     private void buildVehicleBox() {
     	vehicleBox.setPromptText("Select a vehicle");
     	vehicleBox.setConverter(new StringConverter<Vehicle>() {
@@ -234,7 +231,7 @@ public class FuelScreen extends BorderPane {
     		fail("price per gallon must be a number, like 3.62", priceField);
     		return;
     	}
-    	if (!Validator.validGallons(gallons)) { fail("Gallons must be greater than 0", gallonsField); return;}
+        if (!Validator.validCost(price)) { fail("Price per gallon must be greater than 0", priceField); return;}
     	if (decimals(priceText) > 2) {fail("price per gallon can have at most 2 decimals, like 3.62", priceField); return;}
     	
     	try {
@@ -260,7 +257,7 @@ public class FuelScreen extends BorderPane {
     				+ (shown ? "" : " (not shown in the history because of the current filter)"));
     	} catch (SQLException e) {
     		e.printStackTrace();
-    		messageBar.error("Could not save the fuel Entry");
+    		messageBar.error("Could not save the fuel entry");
     	}
     }
     
@@ -283,7 +280,7 @@ public class FuelScreen extends BorderPane {
     	// Refresh the dropdown and clear the stale pick
     	vehicleBox.setItems(FXCollections.observableArrayList(activeOnly(vehicleDAO.findAll(null, null))));
     	vehicleBox.setValue(null);
-    	messageBar.error(vehicleLabel(v.getVehicleId()) + "is no longer Active. Choose another vehicle.");
+    	messageBar.error(vehicleLabel(v.getVehicleId()) + " is no longer Active. Choose another vehicle.");
     	return false;
     }
     
@@ -327,6 +324,7 @@ public class FuelScreen extends BorderPane {
     	for (FuelEntry f : table.getItems()) {
     		if (f.getFuelId() == fuelId) {
     			table.getSelectionModel().select(f);
+    			table.scrollTo(f);
     			return true;
     		}
     	}
