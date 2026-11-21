@@ -15,7 +15,8 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-    private Scene scene;   
+    private Scene scene;
+    private AppShell shell;
 
     @Override
     public void start(Stage stage) {
@@ -24,6 +25,7 @@ public class MainApp extends Application {
         stage.setTitle("FMAS - Fleet Management & Analytics System");
         stage.setScene(scene);
         stage.show();
+        
     }
 
     private void showMainMenu() {
@@ -31,11 +33,11 @@ public class MainApp extends Application {
     }
 
     private void showVehicles() {
-        show("FMAS \u2014 Vehicle Management", "Vehicles", new VehicleScreen());
+        show("FMAS \u2014 Vehicle Management", "Vehicles", new VehicleScreen(this::syncSidebar));
     }
     
     private void showDrivers() {
-    	VehicleScreen screen = new VehicleScreen();
+    	VehicleScreen screen = new VehicleScreen(this::syncSidebar);
     	screen.showDriversTab();
     	show("FMAS \u2014 Vehicle Management", "Drivers", screen);
     }
@@ -45,18 +47,24 @@ public class MainApp extends Application {
     }
     
     private void showFuel() {
-        show("FMAS — Fuel & Maintenance", "Fuel", new FuelScreen());
+        show("FMAS — Fuel & Maintenance", "Fuel", new FuelScreen(this::syncSidebar));
     }
     
     private void showMaintenance() {
-        FuelScreen screen = new FuelScreen();
+        FuelScreen screen = new FuelScreen(this::syncSidebar);
         screen.showMaintenanceTab();
         show("FMAS \u2014 Fuel & Maintenance", "Maintenance", screen);
     }
 
     //>> The one place that builds a framed screen: header, sidebar and content.
     private void show(String title, String selectedNav, Node content) {
-        scene.setRoot(new AppShell(title, selectedNav, content, this::navigate));
+        shell = new AppShell(title, selectedNav, content, this::navigate);
+        scene.setRoot(shell);
+    }
+
+    //>> Called by a screen when its tab changes (Drivers/Vehicles, Maintenance/Fuel): moves the sidebar highlight only
+    private void syncSidebar(String name) {
+        if (shell != null) shell.selectNav(name);
     }
 
     //>> Called by the sidebar with the name of the clicked item.

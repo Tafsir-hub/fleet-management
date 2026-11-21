@@ -292,3 +292,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: no code; the two maintenance test cases run on the screen; results written in Test_Tracking.xlsx; evidence screenshots saved in docs/evidence
 - Test cases touched: TC-18, TC-19
 - Problems and fixes: none during the run
+
+
+### Polish - Sidebar sync and trips update mileage
+- Commit message: Polish: Sync the sidebar with the screen tabs and add trip miles to vehicle mileage
+- Screenshots: ![Sidebar follows the tab](screens/polish-01-sidebar-sync.png) ![Vehicle mileage after a trip](screens/polish-02-trip-mileage.png)
+- What changed: switching between the Vehicles/Drivers tabs or the Fuel/Maintenance tabs now moves the sidebar highlight too (Sidebar select method, AppShell selectNav, a callback from MainApp to VehicleScreen and FuelScreen); TripDAO.addTrip now saves the trip and adds its rounded miles to the vehicle mileage in one transaction, so both are saved or neither is
+- Test cases touched: none re-run (TC-12 to TC-14 for trips re-checked by hand: new trips still save, and the vehicle mileage goes up by the rounded miles)
+- Problems and fixes: none

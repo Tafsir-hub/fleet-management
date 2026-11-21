@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.tafsir.fleetmanagement.dao.FuelDAO;
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
@@ -65,10 +66,10 @@ public class FuelScreen extends BorderPane {
 
     private List<Vehicle> vehicles = new ArrayList<>();
 
-    public FuelScreen() {
+    public FuelScreen(Consumer<String> onSection) {
         setPadding(new Insets(18, 20, 14, 20));
         
-        tabs = new TabSwitch(this::showTab, "Fuel", "Maintenance");
+        tabs = new TabSwitch(tab -> { showTab(tab); onSection.accept(tab); }, "Fuel", "Maintenance");
         setTop(tabs);
         
         setTop(tabs);

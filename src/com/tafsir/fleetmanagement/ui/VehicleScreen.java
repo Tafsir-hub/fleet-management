@@ -4,6 +4,7 @@ package com.tafsir.fleetmanagement.ui;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
 import com.tafsir.fleetmanagement.model.Vehicle;
@@ -50,11 +51,11 @@ public class VehicleScreen extends BorderPane {
 	private final MessageBar messageBar = new MessageBar();
 	
 	
-	public VehicleScreen() {
+	public VehicleScreen(Consumer<String> onSection) {
 		
 		setPadding(new Insets(18, 20, 14, 20));
 		
-		tabs = new TabSwitch(this::showTab, "Vehicles", "Drivers");
+		tabs = new TabSwitch(tab -> { showTab(tab); onSection.accept(tab); }, "Vehicles", "Drivers");
 		
 		setTop(tabs);
 		BorderPane.setMargin(tabs, new Insets(0, 0, 16, 0));

@@ -20,10 +20,13 @@ public class TripDAO extends DBConnection {
 
     // Saves a trip and returns the new trip_id
     public int addTrip(Trip t) throws SQLException {
-        String sql = "INSERT INTO trips (vehicle_id, driver_id, trip_date, origin, destination, miles) "
+        String insert = "INSERT INTO trips (vehicle_id, driver_id, trip_date, origin, destination, miles) "
                    + "VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection c = getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String addMiles = "UPDATE vehicles SET mileage = mileage + ? WHERE vehicle_id = ?";
+        try (Connection c = getConnection()){
+        	c.setAutoCommit(false);
+        	try (PreparedStatement ps = c.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+        		 PreparedStatement up = c.prepareStatement(addMiles)) {		
             ps.setInt(1, t.getVehicleId());
             ps.setInt(2, t.getDriverId());
             ps.setDate(3, java.sql.Date.valueOf(t.getTripDate()));
@@ -31,12 +34,27 @@ public class TripDAO extends DBConnection {
             ps.setString(5, t.getDestination());
             ps.setDouble(6, t.getMiles());
             ps.executeUpdate();
+            
+            int id;
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                return keys.next() ? keys.getInt(1) : -1;
-            }
+                id = keys.next() ? keys.getInt(1) : -1;
+           }
+            
+            // Vehicle mileage is a whole number, so the trip miles are rounded (94.5 adds 95)
+            up.setInt(1, (int) Math.round(t.getMiles()));
+            up.setInt(2, t.getVehicleId());
+            up.executeUpdate();
+
+            c.commit();
+            return id;
+        } catch (SQLException e) {
+            c.rollback();
+            throw e;
         }
     }
-
+}
+            
+   
     // Any combination of filters; null means "all"
     public List<Trip> find(Integer vehicleId, Integer driverId) throws SQLException {
         String sql = SELECT
