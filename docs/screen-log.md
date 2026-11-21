@@ -268,3 +268,10 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: groundwork for TC-18 and TC-19
 - Problems and fixes: none
 
+
+### Slice 6, Step 4 - Validate and save maintenance records
+- Commit message: Slice 6 step 4: Validate and save maintenance records
+- Screenshots: ![Validation message](screens/maint-step-04-error.png) ![Record saved](screens/maint-step-04-saved.png)
+- What changed: Save Maintenance Record now checks the fields in order and shows a red message for the first problem (vehicle, date, service type, cost greater than 0 with at most 2 decimals, whole-number mileage that cannot be above the vehicle's current mileage); a valid record is saved with MaintenanceDAO.addRecord, the history refreshes, the new row is highlighted and a green message shows
+- Test cases touched: groundwork for TC-18 and TC-19
+- Problems and fixes: the form label VEHICLE was misspelled and the service type box lost its hint after a save; both fixed

@@ -1,5 +1,6 @@
 package com.tafsir.fleetmanagement.ui;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import com.tafsir.fleetmanagement.dao.MaintenanceDAO;
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
+import com.tafsir.fleetmanagement.logic.Validator;
 import com.tafsir.fleetmanagement.model.MaintenanceRecord;
 import com.tafsir.fleetmanagement.model.Vehicle;
 import com.tafsir.fleetmanagement.model.VehicleStatus;
@@ -21,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -113,10 +116,19 @@ public class MaintenancePane extends BorderPane {
 		dateField.setValue(LocalDate.now());
 		dateField.setMaxDate(LocalDate.now());
 		serviceBox.setPromptText("Select a service");
+        vehicleBox.valueProperty().addListener((obs, old, v) ->
+        mileageField.setPromptText(v == null ? "12000" : String.format("Up to %,d", v.getMileage())));
 		serviceBox.getItems().addAll(SERVICE_TYPES);
+        serviceBox.setButtonCell(new ListCell<String>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "Select a service" : item);
+            }
+        });
 		otherField.setPromptText("Describe the service");
 		costField.setPromptText("133.50");
 		mileageField.setPromptText("12000");
+		saveButton.setOnAction(e -> saveRecord());
 		
 		// "Other" lets the user type their own service type
 		otherBox = field("DESCRIBE SERVICE", otherField);
@@ -136,7 +148,7 @@ public class MaintenancePane extends BorderPane {
 			cc.setPercentWidth(100.0 / 3);
 			form.getColumnConstraints().add(cc);	
 		}
-		form.add(field("VEHICE", vehicleBox), 0, 0);
+		form.add(field("VEHICLE", vehicleBox), 0, 0);
 		form.add(field("DATE", dateField), 1, 0);
 		form.add(field("SERVICE TYPE", serviceBox), 2, 0);
 		form.add(field("COST ($)", costField), 0, 1);
@@ -181,6 +193,101 @@ public class MaintenancePane extends BorderPane {
 		}
 		return list;
 	}
+	
+    // ---------- Saving ----------
+
+    private void saveRecord() {
+        Vehicle v = vehicleBox.getValue();
+        LocalDate date = dateField.getDate();
+        String service = serviceBox.getValue();
+
+        // Checks in field order; the first problem is shown
+        if (v == null) { fail("Choose a vehicle", vehicleBox); return; }
+        if (date == null) { fail("Enter a valid date, like 11/15/2026", dateField); return; }
+        if (!Validator.validTripDate(date)) { fail("Service date cannot be in the future", dateField); return; }
+        if (service == null) { fail("Choose a service type", serviceBox); return; }
+
+        if ("Other".equals(service)) {
+            service = otherField.getText().trim();
+            if (service.isEmpty() || service.equalsIgnoreCase("Other")) { fail("Describe the service", otherField); return; }
+            if (service.length() > 60) { fail("The service description can have at most 60 characters", otherField); return; }
+            // Use the standard spelling if it matches a listed type
+            for (String type : SERVICE_TYPES) {
+                if (type.equalsIgnoreCase(service)) service = type;
+            }
+        
+        }
+
+        String costText = costField.getText().trim();
+        double cost;
+        try {
+            cost = Double.parseDouble(costText);
+        } catch (NumberFormatException ex) {
+            fail("Cost must be a number, like 133.50", costField);
+            return;
+        }
+        if (!Validator.validCost(cost)) { fail("Cost must be greater than 0", costField); return; }
+        if (decimals(costText) > 2) { fail("Cost can have at most 2 decimals, like 133.50", costField); return; }
+        if (cost > 999999.99) { fail("Cost cannot be more than 999,999.99", costField); return; }
+
+        int mileage;
+        try {
+            mileage = Integer.parseInt(mileageField.getText().trim());
+        } catch (NumberFormatException ex) {
+            fail("Mileage must be a whole number, like 12000", mileageField);
+            return;
+        }
+        if (mileage < 0) { fail("Mileage cannot be negative", mileageField); return; }
+        if (mileage > v.getMileage()) {
+            fail(String.format("Mileage cannot be more than the vehicle's current mileage (%,d). Update the vehicle first.",
+                    v.getMileage()), mileageField);
+            return;
+        }
+
+        try {
+            int id = maintenanceDAO.addRecord(new MaintenanceRecord(0, v.getVehicleId(), date, service, cost, mileage));
+            costField.clear();
+            mileageField.clear();
+            otherField.clear();
+            serviceBox.setValue(null);
+            loadRecords();
+            boolean shown = selectRecord(id);
+            messageBar.success(String.format("Saved maintenance record: %s, %s, $%,.2f",
+                    vehicleLabel(v.getVehicleId()), service, cost)
+                    + (shown ? "" : " (not shown in the history because of the current filter)"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            messageBar.error("Could not save the maintenance record");
+        }
+    }
+
+    // Red message plus the cursor on the field that needs fixing
+    private void fail(String text, Node field) {
+        messageBar.error(text);
+        field.requestFocus();
+    }
+
+    // Number of digits after the decimal point in what the user typed ("133.500" counts as 2)
+    private int decimals(String text) {
+        try {
+            return Math.max(0, new BigDecimal(text).stripTrailingZeros().scale());
+        } catch (NumberFormatException e) {
+            return 99;   // things like "12d" or "NaN" are not plain numbers
+        }
+    }
+
+    // Highlights the new row in the history
+    private boolean selectRecord(int maintId) {
+        for (MaintenanceRecord r : table.getItems()) {
+            if (r.getMaintId() == maintId) {
+                table.getSelectionModel().select(r);
+                table.scrollTo(r);
+                return true;
+            }
+        }
+        return false;
+    }
+    
 	// ---------------Loading------------------
 	
 	// The history filter lists every vehicle: "All vehicles" first
