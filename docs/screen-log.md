@@ -300,3 +300,12 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: switching between the Vehicles/Drivers tabs or the Fuel/Maintenance tabs now moves the sidebar highlight too (Sidebar select method, AppShell selectNav, a callback from MainApp to VehicleScreen and FuelScreen); TripDAO.addTrip now saves the trip and adds its rounded miles to the vehicle mileage in one transaction, so both are saved or neither is
 - Test cases touched: none re-run (TC-12 to TC-14 for trips re-checked by hand: new trips still save, and the vehicle mileage goes up by the rounded miles)
 - Problems and fixes: none
+
+## Cost (slice 7)
+
+### Slice 7 - Step 1: Operating cost query
+- Commit message: Slice 7 step 1: Add the operating cost query
+- What changed: CostSummary model and CostDAO.findCosts(vehicleId, from, to): one row per vehicle with fuel cost, maintenance cost and total, summed separately so rows are not double counted; CostDAOTest checks the totals against sums added up in plain Java (all vehicles, one vehicle, a date range, an empty range)
+- Test cases touched: none yet (groundwork for TC-22)
+- Problems and fixes: none
+
