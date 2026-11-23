@@ -309,3 +309,12 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: none yet (groundwork for TC-22)
 - Problems and fixes: none
 
+
+### Slice 7 - Step 2: Reports screen and cost report form
+- Commit message: Slice 7 step 2: Add the Reports screen with the cost report form
+- Screenshots: ![Reports screen](screens/cost-step-02-reports-form.png)
+- What changed: new ReportsScreen with the operating cost report form (vehicle dropdown including Retired vehicles, optional From and To dates, Clear and Run Report buttons) and an empty results table (Vehicle, Fuel, Maintenance, Total); the Reports sidebar item now opens it from MainApp
+- Test cases touched: none yet (Run Report is wired in step 3)
+- Problems and fixes: none
+
+
