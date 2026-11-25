@@ -1,10 +1,13 @@
 package com.tafsir.fleetmanagement.ui;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
+import com.tafsir.fleetmanagement.dao.CostDAO;
 import com.tafsir.fleetmanagement.model.CostSummary;
 import com.tafsir.fleetmanagement.model.Vehicle;
 import com.tafsir.fleetmanagement.ui.components.DateField;
@@ -41,6 +44,8 @@ public class ReportsScreen extends BorderPane{
 	private final MessageBar messageBar = new MessageBar();
 	
 	private final VehicleDAO vehicleDAO = new VehicleDAO();
+	private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+	private final CostDAO costDAO = new CostDAO();
 	private List<Vehicle> vehicles = new ArrayList<>();
 	
 	public ReportsScreen() {
@@ -50,6 +55,7 @@ public class ReportsScreen extends BorderPane{
 		
 		loadVehicles();
 		clearButton.setOnAction(e -> clearFilters());
+		runButton.setOnAction(e -> runReport());
 	
 	}
 	
@@ -113,8 +119,58 @@ public class ReportsScreen extends BorderPane{
 		fromField.setValue(null);
 		toField.getEditor().clear();
 		toField.setValue(null);
+		table.getItems().clear();
+		totalLabel.setText("");
+		messageBar.hide();
 	}
 	
+	private void runReport() {
+		LocalDate from = fromField.getDate();
+		LocalDate to = toField.getDate();
+
+		// Checks in field order; the first problem is shown. Empty dates are fine (they mean all dates).
+		if (!fromField.isBlank() && from == null) { fail("Enter a valid From date, like 11/01/2026", fromField); return; }
+		if (!toField.isBlank() && to == null) { fail("Enter a valid To date, like 11/30/2026", toField); return; }
+		if (from != null && to != null && from.isAfter(to)) { fail("The From date cannot be after the To date", fromField); return; }
+
+		// First item is "All vehicles", so the vehicle list is shifted by one
+		int pick = vehicleBox.getSelectionModel().getSelectedIndex();
+		Integer vehicleId = pick <= 0 ? null : vehicles.get(pick - 1).getVehicleId();
+
+		try {
+			List<CostSummary> rows = costDAO.findCosts(vehicleId, from, to);
+			table.setItems(FXCollections.observableArrayList(rows));
+
+			double fuel = 0;
+			double maintenance = 0;
+			for (CostSummary r : rows) {
+				fuel += r.getFuelCost();
+				maintenance += r.getMaintenanceCost();
+			}
+			double total = Math.round((fuel + maintenance) * 100.0) / 100.0;
+
+			String who = vehicleId == null ? "all vehicles" : vehicleLabel(vehicleId);
+			String period;
+			if (from != null && to != null) period = from.format(DATE_FMT) + " to " + to.format(DATE_FMT);
+			else if (from != null) period = "from " + from.format(DATE_FMT);
+			else if (to != null) period = "up to " + to.format(DATE_FMT);
+			else period = "all dates";
+
+			totalLabel.setText(String.format("Total for %s, %s: $%,.2f   (fuel $%,.2f + maintenance $%,.2f)",
+					who, period, total, fuel, maintenance));
+			messageBar.hide();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			messageBar.error("Could not run the report");
+		}
+	}
+
+	// Red message plus the cursor on the field that needs fixing
+	private void fail(String text, Node field) {
+		messageBar.error(text);
+		field.requestFocus();
+	}
+    
 	//---------Helpers---------------
 	
 	// Small label above a control, like the other forms

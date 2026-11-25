@@ -318,3 +318,17 @@ TC-08: Only Van-type vehicles shown (3)
 - Problems and fixes: none
 
 
+### Slice 7 - Step 3: Run the operating cost report
+- Commit message: Slice 7 step 3: Run the operating cost report
+- Screenshots: ![Report for all vehicles](screens/cost-step-03-report-all.png) ![Date check message](screens/cost-step-03-report-error.png)
+- What changed: Run Report on the Reports screen now reads CostDAO.findCosts for the chosen vehicle and dates and shows fuel, maintenance and total per vehicle, with a line under the table for the combined total and the period; date checks (valid From and To, From not after To) show a red message and put the cursor in the field; Clear also empties the results
+- Test cases touched: none run yet (TC-22 is run in step 4)
+- Problems and fixes: none
+
+
+### Slice 7 - Step 3: Run the operating cost report
+- Commit message: Slice 7 step 3: Run the operating cost report
+- Screenshots: ![Report for all vehicles](screens/cost-step-03-report-all.png) ![Date check message](screens/cost-step-03-report-error.png)
+- What changed: Run Report on the Reports screen now reads CostDAO.findCosts for the chosen vehicle and dates and shows fuel, maintenance and total per vehicle, with a line under the table for the combined total and the period; date checks (valid From and To, From not after To) show a red message and put the cursor in the field; Clear also empties the results
+- Test cases touched: none run yet (TC-22 is run in step 4)
+- Problems and fixes: none
