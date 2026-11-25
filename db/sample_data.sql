@@ -191,3 +191,25 @@ UNION ALL SELECT 'drivers', COUNT(*) FROM drivers
 UNION ALL SELECT 'trips', COUNT(*) FROM trips
 UNION ALL SELECT 'fuel', COUNT(*) FROM fuel
 UNION ALL SELECT 'maintenance', COUNT(*) FROM maintenance;
+
+-- Adds the summary view for usage in Tableau
+CREATE OR REPLACE VIEW v_fleet_summary AS
+SELECT v.vehicle_id,
+       CONCAT('V-', LPAD(v.vehicle_id, 3, '0'))             AS vehicle_code,
+       v.make_model,
+       v.vehicle_type,
+       v.status,
+       v.mileage,
+       COALESCE(f.fuel_cost, 0)                              AS fuel_cost,
+       COALESCE(m.maintenance_cost, 0)                       AS maintenance_cost,
+       COALESCE(f.fuel_cost, 0) + COALESCE(m.maintenance_cost, 0) AS total_cost,
+       COALESCE(t.trip_miles, 0)                             AS trip_miles,
+       COALESCE(f.gallons, 0)                                AS gallons,
+       ROUND(t.trip_miles / NULLIF(f.gallons, 0), 1)         AS mpg
+FROM vehicles v
+LEFT JOIN (SELECT vehicle_id, SUM(total_cost) AS fuel_cost, SUM(gallons) AS gallons
+           FROM fuel GROUP BY vehicle_id) f ON f.vehicle_id = v.vehicle_id
+LEFT JOIN (SELECT vehicle_id, SUM(cost) AS maintenance_cost
+           FROM maintenance GROUP BY vehicle_id) m ON m.vehicle_id = v.vehicle_id
+LEFT JOIN (SELECT vehicle_id, SUM(miles) AS trip_miles
+           FROM trips GROUP BY vehicle_id) t ON t.vehicle_id = v.vehicle_id;

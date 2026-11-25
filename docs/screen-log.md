@@ -341,3 +341,10 @@ TC-08: Only Van-type vehicles shown (3)
 - Test cases touched: TC-22 passed (the report total equals fuel + maintenance in the database)
 - Problems and fixes: none
 
+
+### Slice 7 - Step 5: Fleet summary view for Tableau
+- Commit message: Slice 7 step 5: Add the fleet summary view for Tableau
+- Screenshots: ![Fleet summary view](screens/cost-step-05-fleet-view.png)
+- What changed: new MySQL view v_fleet_summary (one row per vehicle: status, mileage, fuel cost, maintenance cost, total cost, trip miles, gallons, MPG) added to db/schema.sql; fuel, maintenance and trips are added up separately before joining so nothing is counted twice; Tableau will read this view in step 6; Test_Tracking.xlsx updated with the TC-22 result
+- Test cases touched: TC-22 recorded as passed in the tracker (run and logged in step 4)
+- Problems and fixes: none
