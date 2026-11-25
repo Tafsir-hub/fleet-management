@@ -332,3 +332,12 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: Run Report on the Reports screen now reads CostDAO.findCosts for the chosen vehicle and dates and shows fuel, maintenance and total per vehicle, with a line under the table for the combined total and the period; date checks (valid From and To, From not after To) show a red message and put the cursor in the field; Clear also empties the results
 - Test cases touched: none run yet (TC-22 is run in step 4)
 - Problems and fixes: none
+
+
+### Slice 7 - Step 4: TC-22 operating cost report
+- Commit message: Slice 7 step 4: TC-22 run and logged
+- Evidence: docs/evidence/TC-22.png (report in the app), docs/evidence/TC-22-sql.png (same total calculated in MySQL)
+- What was tested: Reports, V-004, all dates, Run Report; the fuel, maintenance and combined total shown in the app were compared with a SQL query on the fuel and maintenance tables for vehicle 4
+- Test cases touched: TC-22 passed (the report total equals fuel + maintenance in the database)
+- Problems and fixes: none
+
