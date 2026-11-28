@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tafsir.fleetmanagement.dao.VehicleDAO;
 import com.tafsir.fleetmanagement.dao.CostDAO;
 import com.tafsir.fleetmanagement.dao.MpgDAO;
+import com.tafsir.fleetmanagement.dao.VehicleDAO;
 import com.tafsir.fleetmanagement.model.CostSummary;
 import com.tafsir.fleetmanagement.model.MpgSummary;
 import com.tafsir.fleetmanagement.model.Vehicle;
@@ -24,6 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -52,6 +54,7 @@ public class CostReportPane extends BorderPane{
 	private final CostDAO costDAO = new CostDAO();
 	private final MpgDAO mpgDAO= new MpgDAO();
 	private final Map<Integer,Double> milesByVehicle = new HashMap<>();
+	private final int TOTAL_ID = -1; 
 	
 	
 	private List<Vehicle> vehicles = new ArrayList<>();
@@ -105,6 +108,17 @@ public class CostReportPane extends BorderPane{
 		table.getColumns().add(TableColumns.<CostSummary> formatted("Maintenance", r -> String.format("$%,.2f", r.getMaintenanceCost()), 130));
 		table.getColumns().add(TableColumns.<CostSummary> formatted("Total", r -> String.format("$%,.2f", r.getTotal()), 130));
 		table.getColumns().add(TableColumns.<CostSummary> formatted("Cost per mile", r -> perMile(r.getTotal(), milesByVehicle.get(r.getVehicleId())), 130));
+		for (TableColumn<CostSummary, ?> col : table.getColumns()) col.setSortable(false);
+
+		// The Total row gets its own style
+		table.setRowFactory(tv -> new TableRow<CostSummary>() {
+			@Override
+			protected void updateItem(CostSummary item, boolean empty) {
+				super.updateItem(item, empty);
+				getStyleClass().remove("total-row");
+				if (!empty && item != null && item.getVehicleId() == TOTAL_ID) getStyleClass().add("total-row");
+			}
+		});
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 		table.setPlaceholder(new Label("Choose a vehicle and dates, then click Run Report"));
 		
@@ -156,7 +170,7 @@ public class CostReportPane extends BorderPane{
 				milesByVehicle.put(m.getVehicleId(), m.getMiles());
 				miles += m.getMiles();
 			}
-			table.setItems(FXCollections.observableArrayList(rows));
+			
 			double fuel = 0;
 			double maintenance = 0;
 			for (CostSummary r : rows) {
@@ -164,6 +178,14 @@ public class CostReportPane extends BorderPane{
 				maintenance += r.getMaintenanceCost();
 			}
 			double total = Math.round((fuel + maintenance) * 100.0) / 100.0;
+			
+			// Total row: only when more than one vehicle is listed
+			List<CostSummary> shown = new ArrayList<>(rows);
+			if (rows.size() > 1) {
+				shown.add(new CostSummary(TOTAL_ID, fuel, maintenance));
+				milesByVehicle.put(TOTAL_ID, miles);
+			}
+			table.setItems(FXCollections.observableArrayList(shown));
 
 			String who = vehicleId == null ? "all vehicles" : vehicleLabel(vehicleId);
 			String period;
@@ -221,6 +243,7 @@ public class CostReportPane extends BorderPane{
 	}
 		
 		private String vehicleLabel(int vehicleId) {
+			if (vehicleId == TOTAL_ID) return "Total";
 			for (Vehicle v : vehicles) {
 				if(v.getVehicleId() == vehicleId)
 					return v.getMakeModel() + " (" + String.format("V-%03d", vehicleId) + ")";

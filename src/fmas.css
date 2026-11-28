@@ -363,3 +363,13 @@
 .report-tile:selected .report-tile-hint {
     -fx-text-fill: #CADCFC;
 }
+
+/* Total row at the bottom of a report table */
+.table-view .table-row-cell.total-row,
+.table-view .table-row-cell.total-row:odd {
+    -fx-background-color: #E4E8F5;
+}
+.table-view .table-row-cell.total-row .table-cell {
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E2761;
+}

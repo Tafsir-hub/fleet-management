@@ -21,6 +21,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableColumn;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -49,6 +51,7 @@ public class FuelEfficiencyPane extends BorderPane {
 	private final MpgDAO mpgDAO = new MpgDAO();
 	private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 	private List<Vehicle> vehicles = new ArrayList<>();
+	private static final int TOTAL_ID = -1;   // marks the Total row
  
 	public FuelEfficiencyPane() {
 		setPadding(new Insets(24));
@@ -97,6 +100,18 @@ public class FuelEfficiencyPane extends BorderPane {
 		table.getColumns().add(TableColumns.<MpgSummary> formatted("Miles", r -> String.format("%,.1f", r.getMiles()), 130));
 		table.getColumns().add(TableColumns.<MpgSummary> formatted("Gallons", r -> String.format("%,.1f", r.getGallons()), 130));
 		table.getColumns().add(TableColumns.<MpgSummary> formatted("MPG", r -> mpgText(r.getMpg()), 130));
+		
+		for (TableColumn<MpgSummary, ?> col : table.getColumns()) col.setSortable(false);
+
+		table.setRowFactory(tv -> new TableRow<MpgSummary>() {
+			@Override
+			protected void updateItem(MpgSummary item, boolean empty) {
+				super.updateItem(item, empty);
+				getStyleClass().remove("total-row");
+				if (!empty && item != null && item.getVehicleId() == TOTAL_ID) getStyleClass().add("total-row");
+			}
+		});
+		
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 		table.setPlaceholder(new Label("Choose a vehicle and dates, then click Run Report"));
  
@@ -140,7 +155,6 @@ public class FuelEfficiencyPane extends BorderPane {
  
 		try {
 			List<MpgSummary> rows = mpgDAO.findMpg(vehicleId, from, to);
-			table.setItems(FXCollections.observableArrayList(rows));
  
 			// Fleet MPG is total miles over total gallons, not the average of the row MPGs
 			double miles = 0;
@@ -149,6 +163,12 @@ public class FuelEfficiencyPane extends BorderPane {
 				miles += r.getMiles();
 				gallons += r.getGallons();
 			}
+			
+			// Total row: only when more than one vehicle is listed
+			List<MpgSummary> shown = new ArrayList<>(rows);
+			if (rows.size() > 1) shown.add(new MpgSummary(TOTAL_ID, miles, gallons));
+			table.setItems(FXCollections.observableArrayList(shown));
+			
 			Double mpg = new MpgSummary(0, miles, gallons).getMpg();
  
 			String who = vehicleId == null ? "all vehicles" : vehicleLabel(vehicleId);
@@ -205,6 +225,7 @@ public class FuelEfficiencyPane extends BorderPane {
 	}
  
 	private String vehicleLabel(int vehicleId) {
+		if (vehicleId == TOTAL_ID) return "Total";
 		for (Vehicle v : vehicles) {
 			if (v.getVehicleId() == vehicleId)
 				return v.getMakeModel() + " (" + String.format("V-%03d", vehicleId) + ")";
