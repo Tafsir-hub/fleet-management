@@ -76,7 +76,7 @@ public class ReportsScreen extends BorderPane {
 			pane = new FuelEfficiencyPane();
 			break;
 		case DUE:
-			pane = placeholder(DUE);
+			pane = new MaintenanceDuePane();
 			break;
 		default:
 			pane = new CostReportPane();
@@ -85,13 +85,13 @@ public class ReportsScreen extends BorderPane {
 	}
 
 	// Stands in for a report that is not built yet
-	private VBox placeholder(String name) {
-		Label title = new Label(name.toUpperCase() + " REPORT");
-		title.getStyleClass().add("section-title");
-		Label note = new Label("This report is added in the next step.");
-		note.getStyleClass().add("muted");
-		VBox box = new VBox(8, title, note);
-		box.setPadding(new Insets(24));
-		return box;
-	}
+//	private VBox placeholder(String name) {
+//		Label title = new Label(name.toUpperCase() + " REPORT");
+//		title.getStyleClass().add("section-title");
+//		Label note = new Label("This report is added in the next step.");
+//		note.getStyleClass().add("muted");
+//		VBox box = new VBox(8, title, note);
+//		box.setPadding(new Insets(24));
+//		return box;
+//	}
 }

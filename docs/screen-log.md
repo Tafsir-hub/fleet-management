@@ -393,3 +393,46 @@ TC-08: Only Van-type vehicles shown (3)
 - What was tested: Reports, Fuel Efficiency, V-004, From 09/01/2026, To 09/30/2026, Run Report; the miles, gallons and MPG shown in the app were compared with a SQL query on the trips and fuel tables for vehicle 4 and the same dates
 - Test cases touched: TC-17 passed (app: 244.8 miles, 14.8 gallons, 16.5 MPG; MySQL: 244.8 miles, 14.82 gallons, 16.5 MPG; the app shows gallons to one decimal)
 - Problems and fixes: none
+
+
+### Slice 8 - Cost per mile on the operating cost report
+- Commit message: Slice 8: Add cost per mile to the operating cost report
+- Screenshots: ![Cost per mile](screens/cost-per-mile-report.png)
+- What changed: new Cost per mile column on the Operating Cost report (total cost divided by trip miles for the same vehicle and dates, a dash when a vehicle has no trip miles); the line under the table also shows the cost per mile for the whole selection; the miles come from MpgDAO, so CostDAO is unchanged; the figure uses the same definition as the Cost Control dashboard
+- What was tested: Reports, Operating Cost, All vehicles, all dates; the cost per mile of V-001, V-002, V-003, V-004 and of all vehicles was worked out by hand as Total divided by the miles shown in the Fuel Efficiency report
+- Test cases touched: none (TC-22 is unchanged: fuel, maintenance and total are the same as before)
+- Problems and fixes: none
+
+
+
+### Slice 7 - Follow-up: Open the Tableau dashboard from FMAS
+- Commit message: Slice 7 follow-up: Open the Tableau dashboard from FMAS
+- Screenshots: ![Dashboard screen](screens/dashboard-screen.png)
+- What changed: the Dashboard item in the sidebar now opens a Dashboard screen that lists the four dashboards and has an Open live dashboard in Tableau button; the button opens FMAS_Dashboard.twb in Tableau Desktop, which reads the fleet_management database directly, so it always shows the current data; a red message appears if the workbook file is not found; the workbook was saved in Tableau presentation mode (F7, then Ctrl+S) so it opens on Fleet Pulse with only the dashboard showing
+- Test cases touched: none
+- Problems and fixes: a web link is not possible: Tableau Public cannot connect to MySQL and Tableau Server or Cloud are paid, so FMAS opens the workbook in Tableau Desktop instead
+
+
+### Slice 8 - Total row on the reports
+- Commit message: Slice 8: Add a Total row to the cost and fuel efficiency reports
+- Screenshots: ![Total row](screens/report-total-row.png)
+- What changed: the Operating Cost and Fuel Efficiency tables now end with a bold Total row when more than one vehicle is listed (fuel, maintenance, total and cost per mile for the cost report; miles, gallons and MPG for the fuel report); the MPG in the Total row is total miles divided by total gallons, not the average of the rows; the columns are no longer sortable so the Total row always stays last; Total row style added to fmas.css
+- What was tested: Reports, All vehicles, all dates; the Total row matches the line under each table (cost report: fuel $3,808.86, maintenance $14,053.42, total $17,862.28, cost per mile $1.88; fuel report: 9,521.7 miles, 919.6 gallons, 10.4 MPG)
+- Test cases touched: none (TC-17 and TC-22 are unchanged)
+- Problems and fixes: the first run showed the label V--01 and a plain row because the Total label check and the row style were not in place yet; both were added and the row now shows as Total in bold
+
+
+### Slice 8 - Step 4: Maintenance-due rule and query
+- Commit message: Slice 8 step 4: Add the maintenance-due rule and query
+- What changed: new MaintenanceRule in the logic layer: a vehicle is due when it has gone 5,000 miles or more, or 180 days or more, since its last service; a vehicle that was never serviced is due; retired vehicles are never listed; the two limits are constants at the top of the class; new MaintenanceDueDAO.findServiceStatus() reads each vehicle's status, current mileage and last service (date and mileage from the same newest record); new models ServiceStatus and DueVehicle; MaintenanceDueTest checks the rule alone with made-up vehicles and a fixed date (4,999 and 5,000 miles, 179 and 180 days, never serviced, retired, in repair) and then checks the database result against a list worked out in plain Java through VehicleDAO and MaintenanceDAO
+- Test cases touched: none yet (groundwork for TC-20 and TC-21; with the current data V-002 and V-008 are due and V-001, V-004, V-005, V-006 and V-007 are not)
+- Problems and fixes: the plan does not state when a vehicle is due, so the 5,000 miles or 180 days rule is an assumption to confirm
+
+
+### Slice 8 - Step 5: Maintenance due screen, TC-20 and TC-21
+- Commit message: Slice 8 step 5: Add the maintenance due report and run TC-20 and TC-21
+- Evidence: docs/evidence/TC-20.png (V-008 listed as due), docs/evidence/TC-21.png (V-004 not due), docs/evidence/TC-20-21-sql.png (the same figures calculated in MySQL), docs/evidence/TC-20-all-vehicles.png (full list)
+- What changed: new MaintenanceDuePane on the Reports screen (Maintenance Due tile): the due list loads when the report opens, with a vehicle filter and Run Report; the table shows vehicle, last service date, miles since, days since and why it is due; a sentence under the table says how many vehicles are due, or that the chosen vehicle is not due (or is retired); the Maintenance Due tile now opens this pane instead of the placeholder; Test_Tracking.xlsx updated with the TC-20 and TC-21 results
+- What was tested: Reports, Maintenance Due, All vehicles, then V-008 and then V-004 with Run Report; the miles since and days since shown in the app were compared with a SQL query on the vehicles and maintenance tables for vehicles 4 and 8
+- Test cases touched: TC-20 passed (V-008: 7,741 miles and 298 days since its last service, both over the limits, listed as due); TC-21 passed (V-004: 1,067 miles and 98 days, both under the limits, not listed)
+- Problems and fixes: none
