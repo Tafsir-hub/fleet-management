@@ -13,7 +13,8 @@ CREATE TABLE `vehicles` (
 
 CREATE TABLE `drivers` (
   `driver_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
   `license_type` varchar(30) NOT NULL,
   `hire_date` date NOT NULL,
   `status` varchar(20) NOT NULL,

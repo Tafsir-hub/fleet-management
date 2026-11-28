@@ -436,3 +436,10 @@ TC-08: Only Van-type vehicles shown (3)
 - What was tested: Reports, Maintenance Due, All vehicles, then V-008 and then V-004 with Run Report; the miles since and days since shown in the app were compared with a SQL query on the vehicles and maintenance tables for vehicles 4 and 8
 - Test cases touched: TC-20 passed (V-008: 7,741 miles and 298 days since its last service, both over the limits, listed as due); TC-21 passed (V-004: 1,067 miles and 98 days, both under the limits, not listed)
 - Problems and fixes: none
+
+
+### Repo cleanup: database files and Tableau temp file
+- Commit message: Repo cleanup: Match the database files to the live schema and ignore Tableau temp files
+- What changed: db/schema.sql drivers table now has first_name and last_name (it still had a single name column, so the file could not be run from scratch because v_fleet_activity already used first_name); db/sample_data.sql replaced with the current version (12 drivers, Monmouth County routes, fictional names); db/dashboard_demo_data.sql added (Sept 7 to Nov 24 demo activity for the dashboards; the Slice 7 step 6 entry listed it but it was missing from the repo); the Tableau temp file ~FMAS_Dashboard__2024.twbr was deleted and ~*.twbr added to .gitignore
+- Test cases touched: none
+- Problems and fixes: found by comparing the repo files with the live database; the files had drifted after the drivers table was changed in Slice 7
