@@ -324,3 +324,42 @@
 .date-picker > .arrow-button {
     -fx-background-color: transparent;
 }
+
+
+/* ---------- Report picker tiles (Reports screen) ---------- */
+.report-tile {
+    -fx-background-color: #F3F5FC;
+    -fx-background-radius: 10;
+    -fx-border-color: #DDE2F2;
+    -fx-border-radius: 10;
+    -fx-padding: 14 16 14 16;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.report-tile:selected {
+    -fx-background-color: #1E2761;
+    -fx-border-color: #1E2761;
+}
+
+.report-tile .report-tile-title {
+    -fx-font-family: "Cambria";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E2761;
+}
+
+.report-tile .report-tile-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: #5B6690;
+}
+
+.report-tile:selected .report-tile-title {
+    -fx-text-fill: white;
+}
+
+.report-tile:selected .report-tile-hint {
+    -fx-text-fill: #CADCFC;
+}

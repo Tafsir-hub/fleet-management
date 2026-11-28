@@ -2,3 +2,4 @@ bin/
 *.class
 .settings/
 config.properties
+~*.twbr

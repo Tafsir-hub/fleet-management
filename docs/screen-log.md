@@ -376,3 +376,10 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: MpgSummary model and MpgDAO.findMpg(vehicleId, from, to): one row per vehicle with miles (from trips) and gallons (from fuel), summed separately so rows are not double counted; MpgSummary.getMpg() divides miles by gallons and gives no value when no fuel was bought; MpgDAOTest checks miles and gallons against sums added up in plain Java (all vehicles, one vehicle, a date range, an empty range) and prints the fleet MPG
 - Test cases touched: none yet (groundwork for TC-17)
 - Problems and fixes: the first test run failed because 96 trips were hidden by TripDAO's join with drivers: drivers 11 and 12 were missing from the local drivers table. The two drivers were added and the test passed
+
+
+### Slice 8 - Step 2: Report picker
+- Commit message: Slice 8 step 2: Add the report picker to the Reports screen
+- What changed: the old ReportsScreen was renamed CostReportPane (the operating cost report, unchanged); a new ReportsScreen shows three tiles (Operating Cost, Fuel Efficiency, Maintenance Due) and swaps the report underneath when a tile is clicked; Fuel Efficiency and Maintenance Due show a placeholder until their steps; tile styles added to fmas.css
+- Test cases touched: none (screen structure only)
+- Problems and fixes: none. Screenshot: docs/screens/mpg-step-02-report-picker.png
