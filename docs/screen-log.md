@@ -369,3 +369,10 @@ TC-08: Only Van-type vehicles shown (3)
 ![Anomaly Watch](screens/cost-step-07-dashboard-anomalies.png)
 
 **Problems and fixes:** Tableau Public cannot connect to MySQL, so Tableau Desktop Free Edition is used. Top N is built with rank calculations, not the Top N filter. The anomaly baseline uses the previous 8 weeks, so recovery weeks are not flagged.
+
+
+### Slice 8 - Step 1: Fuel efficiency (MPG) query
+- Commit message: Slice 8 step 1: Add the fuel efficiency query
+- What changed: MpgSummary model and MpgDAO.findMpg(vehicleId, from, to): one row per vehicle with miles (from trips) and gallons (from fuel), summed separately so rows are not double counted; MpgSummary.getMpg() divides miles by gallons and gives no value when no fuel was bought; MpgDAOTest checks miles and gallons against sums added up in plain Java (all vehicles, one vehicle, a date range, an empty range) and prints the fleet MPG
+- Test cases touched: none yet (groundwork for TC-17)
+- Problems and fixes: the first test run failed because 96 trips were hidden by TripDAO's join with drivers: drivers 11 and 12 were missing from the local drivers table. The two drivers were added and the test passed

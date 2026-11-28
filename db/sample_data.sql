@@ -15,17 +15,17 @@ TRUNCATE TABLE vehicles;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- Drivers (2 are INACTIVE, for the 'inactive driver' test)
-INSERT INTO drivers (driver_id, name, license_type, hire_date, status) VALUES
-(1, 'J. Alvarez', 'CDL-A', '2019-03-11', 'ACTIVE'),
-(2, 'M. Chen', 'CDL-B', '2020-06-22', 'ACTIVE'),
-(3, 'S. Patel', 'Class C', '2021-01-18', 'ACTIVE'),
-(4, 'D. Johnson', 'CDL-A', '2018-09-04', 'ACTIVE'),
-(5, 'R. Okafor', 'Class C', '2022-04-25', 'ACTIVE'),
-(6, 'L. Martinez', 'CDL-B', '2019-11-30', 'ACTIVE'),
-(7, 'K. Williams', 'CDL-A', '2017-05-15', 'ACTIVE'),
-(8, 'T. Nguyen', 'Class C', '2023-02-06', 'ACTIVE'),
-(9, 'A. Brown', 'CDL-B', '2020-08-17', 'INACTIVE'),
-(10, 'P. Rossi', 'Class C', '2021-10-12', 'INACTIVE');
+INSERT INTO drivers (driver_id, first_name, last_name, license_type, hire_date, status) VALUES
+(1, 'Jorge', 'Alvarez', 'CDL-A', '2019-03-11', 'ACTIVE'),
+(2, 'Mei', 'Chen', 'CDL-B', '2020-06-22', 'ACTIVE'),
+(3, 'Sanjay', 'Patel', 'Class C', '2021-01-18', 'ACTIVE'),
+(4, 'Daniel', 'Johnson', 'CDL-A', '2018-09-04', 'ACTIVE'),
+(5, 'Raymond', 'Okafor', 'Class C', '2022-04-25', 'ACTIVE'),
+(6, 'Luis', 'Martinez', 'CDL-B', '2019-11-30', 'ACTIVE'),
+(7, 'Kevin', 'Williams', 'CDL-A', '2017-05-15', 'ACTIVE'),
+(8, 'Tuan', 'Nguyen', 'Class C', '2023-02-06', 'ACTIVE'),
+(9, 'Andre', 'Brown', 'CDL-B', '2020-08-17', 'INACTIVE'),
+(10, 'Paolo', 'Rossi', 'Class C', '2021-10-12', 'INACTIVE');
 
 -- Vehicles (7 ACTIVE, 2 IN_REPAIR, 1 RETIRED)
 INSERT INTO vehicles (vehicle_id, make_model, year, vehicle_type, mileage, status) VALUES
@@ -185,31 +185,13 @@ INSERT INTO maintenance (vehicle_id, service_date, service_type, cost, mileage) 
 (6, '2026-09-07', 'Annual inspection', 256.34, 26855),
 (7, '2026-09-11', 'Oil change', 198.12, 10658);
 
+INSERT INTO drivers (driver_id, first_name, last_name, license_type, hire_date, status) VALUES
+(11, 'Elena',  'Petrova', 'Class C', '2022-08-15', 'ACTIVE'),
+(12, 'Marcus', 'Reed',    'CDL-B',   '2023-10-02', 'ACTIVE');
+
 -- Quick check: this query prints the row count of each table
 SELECT 'vehicles' AS table_name, COUNT(*) AS row_count FROM vehicles
 UNION ALL SELECT 'drivers', COUNT(*) FROM drivers
 UNION ALL SELECT 'trips', COUNT(*) FROM trips
 UNION ALL SELECT 'fuel', COUNT(*) FROM fuel
 UNION ALL SELECT 'maintenance', COUNT(*) FROM maintenance;
-
--- Adds the summary view for usage in Tableau
-CREATE OR REPLACE VIEW v_fleet_summary AS
-SELECT v.vehicle_id,
-       CONCAT('V-', LPAD(v.vehicle_id, 3, '0'))             AS vehicle_code,
-       v.make_model,
-       v.vehicle_type,
-       v.status,
-       v.mileage,
-       COALESCE(f.fuel_cost, 0)                              AS fuel_cost,
-       COALESCE(m.maintenance_cost, 0)                       AS maintenance_cost,
-       COALESCE(f.fuel_cost, 0) + COALESCE(m.maintenance_cost, 0) AS total_cost,
-       COALESCE(t.trip_miles, 0)                             AS trip_miles,
-       COALESCE(f.gallons, 0)                                AS gallons,
-       ROUND(t.trip_miles / NULLIF(f.gallons, 0), 1)         AS mpg
-FROM vehicles v
-LEFT JOIN (SELECT vehicle_id, SUM(total_cost) AS fuel_cost, SUM(gallons) AS gallons
-           FROM fuel GROUP BY vehicle_id) f ON f.vehicle_id = v.vehicle_id
-LEFT JOIN (SELECT vehicle_id, SUM(cost) AS maintenance_cost
-           FROM maintenance GROUP BY vehicle_id) m ON m.vehicle_id = v.vehicle_id
-LEFT JOIN (SELECT vehicle_id, SUM(miles) AS trip_miles
-           FROM trips GROUP BY vehicle_id) t ON t.vehicle_id = v.vehicle_id;
