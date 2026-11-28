@@ -348,3 +348,11 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: new MySQL view v_fleet_summary (one row per vehicle: status, mileage, fuel cost, maintenance cost, total cost, trip miles, gallons, MPG) added to db/schema.sql; fuel, maintenance and trips are added up separately before joining so nothing is counted twice; Tableau will read this view in step 6; Test_Tracking.xlsx updated with the TC-22 result
 - Test cases touched: TC-22 recorded as passed in the tracker (run and logged in step 4)
 - Problems and fixes: none
+
+
+### Slice 7 - Step 6: Activity view and demo data for the dashboard
+- Commit message: Slice 7 step 6: Add the activity view and demo data for the dashboard
+- Screenshots: ![Activity view check](screens/cost-step-06-activity-view.png)
+- What changed: new MySQL view v_fleet_activity (one row per fuel fill, service or trip, with vehicle details, driver and service type) added to db/schema.sql, so the dashboard can show daily, weekly and all-time views; sample_data.sql now uses Lincroft, Monmouth County routes and has two more drivers; new db/dashboard_demo_data.sql adds Sept 7 to Nov 24 activity with planted stories to detect (V-005 fuel consumption jump, V-002 double fuel week, V-008 big maintenance bills)
+- Test cases touched: none (data for the dashboard; TC-26 is run later)
+- Problems and fixes: the first Tableau dashboard (vehicle totals only) could not show trends, so the dashboard is rebuilt on the activity view
