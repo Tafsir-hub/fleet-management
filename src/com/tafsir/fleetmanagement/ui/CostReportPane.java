@@ -4,11 +4,15 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.tafsir.fleetmanagement.dao.VehicleDAO;
 import com.tafsir.fleetmanagement.dao.CostDAO;
+import com.tafsir.fleetmanagement.dao.MpgDAO;
 import com.tafsir.fleetmanagement.model.CostSummary;
+import com.tafsir.fleetmanagement.model.MpgSummary;
 import com.tafsir.fleetmanagement.model.Vehicle;
 import com.tafsir.fleetmanagement.ui.components.DateField;
 import com.tafsir.fleetmanagement.ui.components.TableColumns;
@@ -46,6 +50,10 @@ public class CostReportPane extends BorderPane{
 	private final VehicleDAO vehicleDAO = new VehicleDAO();
 	private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 	private final CostDAO costDAO = new CostDAO();
+	private final MpgDAO mpgDAO= new MpgDAO();
+	private final Map<Integer,Double> milesByVehicle = new HashMap<>();
+	
+	
 	private List<Vehicle> vehicles = new ArrayList<>();
 	
 	public CostReportPane() {
@@ -96,6 +104,7 @@ public class CostReportPane extends BorderPane{
 		table.getColumns().add(TableColumns.<CostSummary> formatted("Fuel", r -> String.format("$%,.2f", r.getFuelCost()), 130));
 		table.getColumns().add(TableColumns.<CostSummary> formatted("Maintenance", r -> String.format("$%,.2f", r.getMaintenanceCost()), 130));
 		table.getColumns().add(TableColumns.<CostSummary> formatted("Total", r -> String.format("$%,.2f", r.getTotal()), 130));
+		table.getColumns().add(TableColumns.<CostSummary> formatted("Cost per mile", r -> perMile(r.getTotal(), milesByVehicle.get(r.getVehicleId())), 130));
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 		table.setPlaceholder(new Label("Choose a vehicle and dates, then click Run Report"));
 		
@@ -139,8 +148,15 @@ public class CostReportPane extends BorderPane{
 
 		try {
 			List<CostSummary> rows = costDAO.findCosts(vehicleId, from, to);
-			table.setItems(FXCollections.observableArrayList(rows));
 
+			// Trip miles for the same vehicle and dates, kept by vehicle for the Cost per mile column
+			milesByVehicle.clear();
+			double miles = 0;
+			for (MpgSummary m : mpgDAO.findMpg(vehicleId, from, to)) {
+				milesByVehicle.put(m.getVehicleId(), m.getMiles());
+				miles += m.getMiles();
+			}
+			table.setItems(FXCollections.observableArrayList(rows));
 			double fuel = 0;
 			double maintenance = 0;
 			for (CostSummary r : rows) {
@@ -156,8 +172,8 @@ public class CostReportPane extends BorderPane{
 			else if (to != null) period = "up to " + to.format(DATE_FMT);
 			else period = "all dates";
 
-			totalLabel.setText(String.format("Total for %s, %s: $%,.2f   (fuel $%,.2f + maintenance $%,.2f)",
-					who, period, total, fuel, maintenance));
+			totalLabel.setText(String.format("Total for %s, %s: $%,.2f   (fuel $%,.2f + maintenance $%,.2f)   Cost per mile: %s",
+					who, period, total, fuel, maintenance, perMile(total, miles)));
 			messageBar.hide();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -180,6 +196,12 @@ public class CostReportPane extends BorderPane{
 		}
 		return new VBox(4, new Label(caption), control);
 		
+	}
+	
+	// Cost divided by trip miles; no miles means no cost per mile
+	private String perMile(double cost, Double miles) {
+		if (miles == null || miles <= 0) return "\u2014";
+		return String.format("$%.2f", cost / miles);
 	}
 	
 	// Every vehicle (Including Retired ones): their past cost still count
