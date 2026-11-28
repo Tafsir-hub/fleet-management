@@ -378,8 +378,18 @@ TC-08: Only Van-type vehicles shown (3)
 - Problems and fixes: the first test run failed because 96 trips were hidden by TripDAO's join with drivers: drivers 11 and 12 were missing from the local drivers table. The two drivers were added and the test passed
 
 
-### Slice 8 - Step 2: Report picker
+### Slice 8 - Step 2: Report picker on the Reports screen
 - Commit message: Slice 8 step 2: Add the report picker to the Reports screen
-- What changed: the old ReportsScreen was renamed CostReportPane (the operating cost report, unchanged); a new ReportsScreen shows three tiles (Operating Cost, Fuel Efficiency, Maintenance Due) and swaps the report underneath when a tile is clicked; Fuel Efficiency and Maintenance Due show a placeholder until their steps; tile styles added to fmas.css
-- Test cases touched: none (screen structure only)
-- Problems and fixes: none. Screenshot: docs/screens/mpg-step-02-report-picker.png
+- Screenshots: ![Report picker](screens/mpg-step-02-report-picker.png)
+- What changed: the existing operating cost report moved into its own class, CostReportPane, with no change in behavior; the new ReportsScreen shows three tiles at the top (Operating Cost, Fuel Efficiency, Maintenance Due) and swaps the report underneath when a tile is clicked; Fuel Efficiency and Maintenance Due show a short placeholder until steps 3 and 5; tile styles added to fmas.css
+- Test cases touched: none (screen structure only; TC-17, TC-20 and TC-21 are run in later steps)
+- Problems and fixes: none
+
+
+### Slice 8 - Step 3: Fuel efficiency screen and TC-17
+- Commit message: Slice 8 step 3: Add the fuel efficiency report screen and run TC-17
+- Evidence: docs/evidence/TC-17.png (report in the app), docs/evidence/TC-17-sql.png (same figures calculated in MySQL), docs/evidence/TC-17-all-vehicles.png (all vehicles, all dates)
+- What changed: new FuelEfficiencyPane on the Reports screen (Fuel Efficiency tile) with vehicle, From and To fields, Run Report and Clear; the table shows miles, gallons and MPG per vehicle (a dash when no fuel was bought); the line under the table shows the MPG for the whole selection, worked out as total miles divided by total gallons; date checks (valid From and To, From not after To) show a red message and put the cursor in the field; the Fuel Efficiency tile now opens this pane instead of the placeholder; Test_Tracking.xlsx updated with the TC-17 result
+- What was tested: Reports, Fuel Efficiency, V-004, From 09/01/2026, To 09/30/2026, Run Report; the miles, gallons and MPG shown in the app were compared with a SQL query on the trips and fuel tables for vehicle 4 and the same dates
+- Test cases touched: TC-17 passed (app: 244.8 miles, 14.8 gallons, 16.5 MPG; MySQL: 244.8 miles, 14.82 gallons, 16.5 MPG; the app shows gallons to one decimal)
+- Problems and fixes: none

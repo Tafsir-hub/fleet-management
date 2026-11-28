@@ -73,7 +73,7 @@ public class ReportsScreen extends BorderPane {
 		Node pane;
 		switch (name) {
 		case MPG:
-			pane = placeholder(MPG);
+			pane = new FuelEfficiencyPane();
 			break;
 		case DUE:
 			pane = placeholder(DUE);
