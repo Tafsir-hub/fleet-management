@@ -1,5 +1,6 @@
 package com.tafsir.fleetmanagement.app;
 
+import com.tafsir.fleetmanagement.ui.DashboardScreen;
 import com.tafsir.fleetmanagement.ui.FuelScreen;
 import com.tafsir.fleetmanagement.ui.LoginScreen;
 import com.tafsir.fleetmanagement.ui.MainMenuScreen;
@@ -61,6 +62,10 @@ public class MainApp extends Application {
         show("FMAS \u2014 Reports", "Reports", new ReportsScreen());
     }
     
+    private void showDashboard() {
+        show("FMAS \u2014 Dashboard", "Dashboard", new DashboardScreen(getHostServices()));
+    }
+    
 
     //>> The one place that builds a framed screen: header, sidebar and content.
     private void show(String title, String selectedNav, Node content) {
@@ -99,6 +104,9 @@ public class MainApp extends Application {
             	break;
             case "Reports":
             	showReports();
+            	break;
+            case "Dashboard":
+            	showDashboard();
             	break;
             default:
                 Dialogs.info("Coming later", name + " is built in a later slice.");
