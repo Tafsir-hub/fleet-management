@@ -356,3 +356,16 @@ TC-08: Only Van-type vehicles shown (3)
 - What changed: new MySQL view v_fleet_activity (one row per fuel fill, service or trip, with vehicle details, driver and service type) added to db/schema.sql, so the dashboard can show daily, weekly and all-time views; sample_data.sql now uses Lincroft, Monmouth County routes and has two more drivers; new db/dashboard_demo_data.sql adds Sept 7 to Nov 24 activity with planted stories to detect (V-005 fuel consumption jump, V-002 double fuel week, V-008 big maintenance bills)
 - Test cases touched: none (data for the dashboard; TC-26 is run later)
 - Problems and fixes: the first Tableau dashboard (vehicle totals only) could not show trends, so the dashboard is rebuilt on the activity view
+
+
+### Slice 7 - Step 7: Fleet dashboards in Tableau
+
+**What changed:** Built four Tableau dashboards on the live MySQL views (v_fleet_summary and v_fleet_activity): Fleet Pulse (KPIs, spend, MPG, weekly rhythm), Leaderboard (driver podium, vehicle medals, top fuel and maintenance), Cost Control (cost vs usage, cost per mile, maintenance treemap) and Anomaly Watch (weekly MPG heatmap and alert list). The pages share a Time Window, a Top N control and vehicle filters, and navigation buttons link them. TC-26 passed: the dashboard totals match SQL run on the base tables.
+
+**Screenshots:**
+![Fleet Pulse](screens/cost-step-07-dashboard-pulse.png)
+![Leaderboard](screens/cost-step-07-dashboard-leaderboard.png)
+![Cost Control](screens/cost-step-07-dashboard-cost-control.png)
+![Anomaly Watch](screens/cost-step-07-dashboard-anomalies.png)
+
+**Problems and fixes:** Tableau Public cannot connect to MySQL, so Tableau Desktop Free Edition is used. Top N is built with rank calculations, not the Top N filter. The anomaly baseline uses the previous 8 weeks, so recovery weeks are not flagged.
